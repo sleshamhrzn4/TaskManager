@@ -17,6 +17,10 @@ public class UserModel {
 
     }
 
+    public UserModel() {
+
+    }
+
 
     public int getUserId() {
         return userId;
@@ -44,20 +48,23 @@ public class UserModel {
         this.userId = userId;
     }
 
-    public void setUserName(){
+    public void setUserName(String userName){
+
         this.userName= userName;
     }
 
-    public void setUserEmail(){
+    public void setUserEmail(String userEmail){
+
         this.userEmail= userEmail;
     }
 
-    public void setPassword(){
+    public void setPassword(String password){
+
         this.password= password;
     }
 
-    public void setRole(){
-        this.role=role;
+    public void setRole(String role){
+        this.role= role;
     }
 
 }
