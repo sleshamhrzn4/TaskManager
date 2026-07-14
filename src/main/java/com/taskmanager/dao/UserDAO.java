@@ -21,7 +21,7 @@ public class UserDAO {
         pst.setString(1,userName);
         pst.setString(2,userEmail);
         pst.setString(3,password);
-        pst.setString(4,role);
+        pst.setString(4,"user");
 
         pst.executeUpdate();
         ResultSet rs = pst.getGeneratedKeys();
