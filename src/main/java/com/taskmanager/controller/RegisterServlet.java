@@ -2,6 +2,7 @@ package com.taskmanager.controller;
 
 import com.taskmanager.dao.UserDAO;
 import com.taskmanager.service.RegisterService;
+import com.taskmanager.utils.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -44,6 +45,8 @@ public class RegisterServlet extends HttpServlet  {
             return;
 
         }
+
+        String hashedPassword = PasswordUtil.getHashPassword(password);
 
         try{
             UserDAO userDAO=new UserDAO();

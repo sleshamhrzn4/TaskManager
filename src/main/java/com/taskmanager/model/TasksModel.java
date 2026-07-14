@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public class TasksModel {
     private int taskId;
+    private int userId;
     private String title;
     private String description;
     private String priority;
@@ -13,8 +14,9 @@ public class TasksModel {
     private LocalDate dueDate;
 
 
-    public TasksModel(int taskId, String title, String description, String priority, String status, LocalDateTime createdDate, LocalDate dueDate){
+    public TasksModel(int taskId, int userId, String title, String description, String priority, String status, LocalDateTime createdDate, LocalDate dueDate){
         this.taskId= taskId;
+        this.userId = userId;
         this.title= title;
         this.description= description;
         this.priority= priority;
@@ -27,6 +29,10 @@ public class TasksModel {
 
     public int getTaskId() {
         return taskId;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getTitle() {
@@ -56,6 +62,10 @@ public class TasksModel {
 
     public void setTaskId(int taskId) {
         this.taskId = taskId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setTitle(String title) {
