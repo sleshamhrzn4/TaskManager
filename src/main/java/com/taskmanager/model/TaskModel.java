@@ -3,7 +3,7 @@ package com.taskmanager.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class TasksModel {
+public class TaskModel {
     private int taskId;
     private int userId;
     private String title;
@@ -14,7 +14,7 @@ public class TasksModel {
     private LocalDate dueDate;
 
 
-    public TasksModel(int taskId, int userId, String title, String description, String priority, String status, LocalDateTime createdDate, LocalDate dueDate){
+    public TaskModel(int taskId, int userId, String title, String description, String priority, String status, LocalDateTime createdDate, LocalDate dueDate){
         this.taskId= taskId;
         this.userId = userId;
         this.title= title;
@@ -26,6 +26,11 @@ public class TasksModel {
 
 
     }
+
+    public TaskModel() {
+
+    }
+
 
     public int getTaskId() {
         return taskId;
