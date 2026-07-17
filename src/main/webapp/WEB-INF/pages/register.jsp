@@ -5,13 +5,14 @@
 <html>
 <head>
     <title>Title</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/register.css">
 </head>
 <body>
 <div class="container">
     <div class=" box">
         <div class=" top-bar">
             <span>Already have an Account? </span>
-            <a href="$pageContext.request.contextPath/login">
+            <a href="${pageContext.request.contextPath}/login">
                 <button class=" login-btn">Login</button>
 
             </a>

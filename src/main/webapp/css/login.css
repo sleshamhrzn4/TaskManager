@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --navy: #14304D;
+    --navy-light: #1E4066;
+    --blue: #2D8FDB;
+    --blue-dark: #1E6FB5;
+    --green: #3FA34D;
+    --bg: #F4F6F9;
+    --surface: #FFFFFF;
+    --line: #E1E5EA;
+    --ink: #1C2126;
+    --ink-soft: #66707B;
+    --red: #E25555;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+
+
+    background-color: var(--navy);
+    background-image:
+            radial-gradient(circle at 12% 18%, rgba(45, 143, 219, 0.35) 0%, transparent 40%),
+            radial-gradient(circle at 88% 82%, rgba(63, 163, 77, 0.25) 0%, transparent 42%),
+            radial-gradient(circle, rgba(255, 255, 255, 0.10) 1.4px, transparent 1.4px),
+            linear-gradient(160deg, var(--navy) 0%, var(--navy-light) 55%, var(--blue-dark) 100%);
+    background-size: auto, auto, 56px 56px, auto;
+    background-position: 0 0, 0 0, 0 0, 0 0;
+    background-repeat: no-repeat, no-repeat, repeat, no-repeat;
+    background-attachment: fixed;
+
+
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+
+.left {
+    display: none;
+}
+
+
+.constainer {
+    display: contents;
+}
+
+
+.right {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 20px 40px -24px rgba(20, 48, 77, 0.25);
+    overflow: hidden;
+}
+
+.right::before {
+
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--blue) 0%, var(--green) 100%);
+}
+
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg);
+}
+
+.top-bar span {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+}
+
+.top-bar a {
+    text-decoration: none;
+}
+
+
+.top-bar .login-btn {
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    color: var(--blue);
+    background: transparent;
+    border: 1px solid var(--blue);
+}
+
+.top-bar .login-btn:hover {
+    background: var(--blue);
+    color: #FFFFFF;
+}
+
+.form-container {
+    padding: 32px 36px 36px;
+}
+
+.form-container h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--navy);
+    text-align: center;
+    margin: 0 0 28px;
+}
+
+.error-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(226, 85, 85, 0.08);
+    border: 1px solid rgba(226, 85, 85, 0.3);
+    color: var(--red);
+    font-size: 0.88rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+form input {
+    width: 100%;
+    padding: 13px 16px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+form input::placeholder {
+    color: var(--ink-soft);
+}
+
+form input:focus {
+    border-color: var(--blue);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(45, 143, 219, 0.15);
+}
+
+form input:invalid:not(:placeholder-shown) {
+    border-color: var(--red);
+}
+
+.login-btn {
+    font-family: inherit;
+    font-weight: 600;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+
+.form-container .login-btn {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px 16px;
+    font-size: 0.95rem;
+    color: #FFFFFF;
+    background: var(--blue);
+    border: none;
+}
+
+.form-container .login-btn:hover {
+    background: var(--blue-dark);
+}
+
+.form-container .login-btn:active {
+    transform: translateY(1px);
+}
+
+.login-btn:focus-visible,
+form input:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        padding: 36px 24px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
