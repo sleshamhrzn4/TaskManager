@@ -12,13 +12,11 @@
 
 <div class="app-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
-        <div class="sidebar-brand">
-            <a href="${pageContext.request.contextPath}/dashboard" class="nav-item">
-                <img src="${pageContext.request.contextPath}/tegar.png"  alt="dashboard" style="width: 200px; height: auto;">
+        <div class="sidebar-brand"><a href="${pageContext.request.contextPath}/dashboard" class="nav-item">
+            <img src="${pageContext.request.contextPath}/tegar.png"  alt="dashboard" style="width: 200px; height: auto;">
 
-            </a>
+        </a>
         </div>
 
         <nav class="sidebar-nav">
@@ -29,13 +27,21 @@
         <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
 
-        <h1>My Tasks</h1>
+        <div class="page-header">
+            <h1>My Tasks</h1>
+            <button type="button" class="add-task-toggle" onclick="toggleAddForm()">+ Add Task</button>
+        </div>
 
-        <!-- Add task toggle -->
-        <button type="button" class="add-task-toggle" onclick="toggleAddForm()">+ Add Task</button>
+
+        <form action="${pageContext.request.contextPath}/task" method="get" class="search-form">
+            <input type="text" name="search" placeholder="Search tasks..." value="${param.search}"/>
+            <button type="submit">Search</button>
+            <c:if test="${not empty param.search}">
+                <a href="${pageContext.request.contextPath}/task" class="clear-search">Clear</a>
+            </c:if>
+        </form>
 
         <form id="addTaskForm" action="${pageContext.request.contextPath}/task" method="post" class="add-task-form">
             <input type="hidden" name="action" value="add"/>
@@ -76,7 +82,6 @@
                 </c:forEach>
             </div>
 
-            <!-- IN PROGRESS -->
             <div class="column">
                 <div class="column-header">
                     <h2>In Progress</h2>
@@ -97,7 +102,7 @@
                 </c:forEach>
             </div>
 
-            <!-- DONE -->
+
             <div class="column">
                 <div class="column-header">
                     <h2>Done</h2>
@@ -121,7 +126,7 @@
     </main>
 </div>
 
-<!-- TASK DETAIL / EDIT POPUP -->
+
 <div id="taskOverlay" class="modal-overlay">
     <div class="modal">
         <div class="modal-header">

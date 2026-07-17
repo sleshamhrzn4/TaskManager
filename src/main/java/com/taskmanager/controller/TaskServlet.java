@@ -31,7 +31,16 @@ public class TaskServlet extends HttpServlet {
 
         try {
             TaskDAO taskDAO = new TaskDAO();
-            List<TaskModel> allTasks = taskDAO.getAllTaskByUser(user.getUserId());
+            String searchKeyword = req.getParameter("search");
+            List<TaskModel> allTasks;
+
+            if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
+                allTasks = taskDAO.searchTasks(user.getUserId(), searchKeyword.trim());
+            } else {
+                allTasks = taskDAO.getAllTaskByUser(user.getUserId());
+            }
+
+
 
             req.setAttribute("todoTasks", filterByStatus(allTasks, "todo"));
             req.setAttribute("progressTasks", filterByStatus(allTasks, "inprogress"));
@@ -120,7 +129,7 @@ public class TaskServlet extends HttpServlet {
         task.setDueDate(dueDate);
 
         new TaskDAO().addTask(task);
-        return null; // success
+        return null;
     }
 
     private String handleUpdate(HttpServletRequest req) throws Exception {

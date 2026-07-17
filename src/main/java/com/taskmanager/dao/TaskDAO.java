@@ -90,6 +90,24 @@ public class TaskDAO {
          return task;
      }
 
+        public List<TaskModel> searchTasks(int userId, String keyword) throws Exception {
+            List<TaskModel> taskList = new ArrayList<>();
+            String sql = "SELECT * FROM tasks WHERE userId = ? AND title LIKE ?";
+
+            try (Connection con = DBConfig.getConnection();
+                 PreparedStatement pst = con.prepareStatement(sql)) {
+
+                pst.setInt(1, userId);
+                pst.setString(2, "%" + keyword + "%");
+
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    taskList.add(mapRow(rs));
+                }
+            }
+            return taskList;
+        }
+
      public int updateTask(TaskModel tasks) throws Exception{
          Connection con = DBConfig.getConnection();
          String sql = "UPDATE tasks SET title=?, description=?, priority=?, status=?, createdDate=?, dueDate=? WHERE taskId=?";
