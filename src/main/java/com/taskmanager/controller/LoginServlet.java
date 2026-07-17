@@ -8,6 +8,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.io.Serial;
@@ -40,24 +41,31 @@ public class LoginServlet extends HttpServlet {
         if (password == null || password.trim().isEmpty()) {
             req.setAttribute("errorMessage", "Password is required.");
             doGet(req, resp);
-
+            return;
         }
 
-        email= email.trim();
+        email = email.trim();
 
-        try{
+        try {
             LoginService loginService = new LoginService();
-            UserModel user = loginService.authentiate(email, password);
+            UserModel user = loginService.authenticate(email, password);
 
             if (user == null) {
                 req.setAttribute("errorMessage", "Invalid email or password.");
                 doGet(req, resp);
                 return;
-
             }
-        }catch (Exception e ){
+
+
+            HttpSession session = req.getSession(true);
+            session.setAttribute("user", user);
+
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
+
+        } catch (Exception e) {
             e.printStackTrace();
-            req.setAttribute("errorMessage", "Something is wrong.Please try again later.");
+            req.setAttribute("errorMessage", "Something is wrong. Please try again later.");
+            doGet(req, resp);
         }
-}
+    }
 }

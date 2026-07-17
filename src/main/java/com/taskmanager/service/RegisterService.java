@@ -1,6 +1,5 @@
 package com.taskmanager.service;
 
-import com.taskmanager.dao.UserDAO;
 
 import java.util.HashMap;
 import java.util.Map;

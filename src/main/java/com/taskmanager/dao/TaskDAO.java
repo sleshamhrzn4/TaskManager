@@ -8,23 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskDAO {
-     public static void addTask(TaskModel tasks) throws Exception{
-         Connection con = DBConfig.getConnection();
-         String sql = "INSERT INTO tasks( title , description, priority, status, createdDate, dueDate) VALUES(?,?,?,?,?,?)";
-         PreparedStatement pst = con.prepareStatement(sql);
-         pst.setString(1, tasks.getTitle());
-         pst.setString(2, tasks.getDescription());
-         pst.setString(3, tasks.getPriority());
-         pst.setString(4, tasks.getStatus());
-         pst.setTimestamp(5, Timestamp.valueOf(tasks.getCreatedDate()));
-         pst.setDate(6, Date.valueOf(tasks.getDueDate()));
+    public void addTask(TaskModel tasks) throws Exception {
+        Connection con = DBConfig.getConnection();
+        String sql = "INSERT INTO tasks (userId, title, description, priority, status, createdDate, dueDate) VALUES (?,?,?,?,?,?,?)";
+        PreparedStatement pst = con.prepareStatement(sql);
 
-         pst.executeUpdate();
+        pst.setInt(1, tasks.getUserId());
+        pst.setString(2, tasks.getTitle());
+        pst.setString(3, tasks.getDescription());
+        pst.setString(4, tasks.getPriority());
+        pst.setString(5, tasks.getStatus());
+        pst.setTimestamp(6, Timestamp.valueOf(tasks.getCreatedDate()));
 
-         pst.close();
-         con.close();
+        if (tasks.getDueDate() != null) {
+            pst.setDate(7, Date.valueOf(tasks.getDueDate()));
+        } else {
+            pst.setNull(7, Types.DATE);
+        }
 
-     }
+        pst.executeUpdate();
+
+        pst.close();
+        con.close();
+    }
 
 
     private TaskModel mapRow(ResultSet rs) throws SQLException {
@@ -36,7 +42,12 @@ public class TaskDAO {
         task.setPriority(rs.getString("priority"));
         task.setStatus(rs.getString("status"));
         task.setCreatedDate(rs.getTimestamp("createdDate").toLocalDateTime());
-        task.setDueDate(rs.getDate("dueDate").toLocalDate());
+        java.sql.Date dueDate = rs.getDate("dueDate");
+        if (dueDate != null) {
+            task.setDueDate(dueDate.toLocalDate());
+        } else {
+            task.setDueDate(null);
+        }
         return task;
     }
 

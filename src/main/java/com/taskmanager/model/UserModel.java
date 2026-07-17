@@ -39,7 +39,7 @@ public class UserModel {
         return password;
     }
 
-    public String getRo() {
+    public String getRole() {
         return role;
     }
 
