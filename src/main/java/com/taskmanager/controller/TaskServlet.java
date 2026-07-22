@@ -32,12 +32,18 @@ public class TaskServlet extends HttpServlet {
         try {
             TaskDAO taskDAO = new TaskDAO();
             String searchKeyword = req.getParameter("search");
+
+            String sortBy = req.getParameter("sortBy");
+            String sortDir = req.getParameter("sortDir");
+            if (sortBy==null) sortBy= "dueDate";
+            if (sortDir==null) sortDir=" ASC";
             List<TaskModel> allTasks;
 
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
                 allTasks = taskDAO.searchTasks(user.getUserId(), searchKeyword.trim());
             } else {
-                allTasks = taskDAO.getAllTaskByUser(user.getUserId());
+                allTasks = taskDAO.getAllTaskByUser(user.getUserId(),sortBy,sortDir);
+
             }
 
 
@@ -45,6 +51,8 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("todoTasks", filterByStatus(allTasks, "todo"));
             req.setAttribute("progressTasks", filterByStatus(allTasks, "inprogress"));
             req.setAttribute("doneTasks", filterByStatus(allTasks, "done"));
+            req.setAttribute("sortBy",sortBy);
+            req.setAttribute("sortDir",sortDir);
 
             req.getRequestDispatcher("/WEB-INF/pages/task.jsp").forward(req, resp);
 

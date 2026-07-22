@@ -34,28 +34,29 @@
             <button type="button" class="add-task-toggle" onclick="toggleAddForm()">+ Add Task</button>
         </div>
 
+        <div class="search-form">
+            <input type="text" id="liveSearchInput" placeholder="Search tasks..." oninput="liveSearch(this.value)">
 
-        <form action="${pageContext.request.contextPath}/task" method="get" class="search-form">
-            <input type="text" name="search" placeholder="Search tasks..." value="${param.search}"/>
-            <button type="submit">Search</button>
-            <c:if test="${not empty param.search}">
-                <a href="${pageContext.request.contextPath}/task" class="clear-search">Clear</a>
-            </c:if>
-        </form>
+        </div>
 
-        <form id="addTaskForm" action="${pageContext.request.contextPath}/task" method="post" class="add-task-form">
+
+        <form id="addTaskForm" action="$pageContext.request.contextPath}/task" method="post" class="add-task-form" >
             <input type="hidden" name="action" value="add"/>
-            <input type="text" name="title" placeholder="Task title" required/>
-            <input type="text" name="description" placeholder="Description"/>
-            <select name="priority">
-                <option value="Low">Low</option>
-                <option value="Medium" selected>Medium</option>
-                <option value="High">High</option>
+            <label>
+                <input type="text" name="title" placeholder="Task title" required/>
+            </label>
+            <label>
+                <input type = "text" name="description" placeholder="Description">
+            </label>
+            <select>
+                <option value="Low"></option>
+                <option value="Medium"></option>
+                <option value="HIgh"></option>
             </select>
-            <input type="date" name="dueDate"/>
-            <button type="submit">Add Task</button>
-            <button type="button" class="cancel-btn" onclick="toggleAddForm()">Cancel</button>
+
+
         </form>
+
 
         <hr/>
 
