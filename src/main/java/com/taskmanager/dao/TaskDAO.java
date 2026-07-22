@@ -42,7 +42,7 @@ public class TaskDAO {
         task.setPriority(rs.getString("priority"));
         task.setStatus(rs.getString("status"));
         task.setCreatedDate(rs.getTimestamp("createdDate").toLocalDateTime());
-        java.sql.Date dueDate = rs.getDate("dueDate");
+        Date dueDate = rs.getDate("dueDate");
         if (dueDate != null) {
             task.setDueDate(dueDate.toLocalDate());
         } else {
@@ -142,6 +142,39 @@ public class TaskDAO {
 
 
      }
+
+
+     //SORTING
+    public List<TaskModel> getAllTaskByUser(int userId, String sortBy, String sortDir) throws Exception{
+        List <TaskModel> taskList = new ArrayList<>();
+
+        String column;
+        switch (sortBy){
+            case "priority": column = "priority"; break;
+            case "createdDate": column = "createdDate"; break;
+            case "title": column = "title"; break;
+            default: column = "dueDate"; break;
+        }
+
+        String direction = "DESC". equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        String sql = " SELECT * FROM tasks WHERE userId= ? ORDER BY "  +column + " " +direction;
+
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setInt(1, userId);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    taskList.add(mapRow(rs));
+                }
+            }
+        }
+        return taskList;
+
+    }
+
+
 
 
 }
