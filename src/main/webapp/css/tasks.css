@@ -34,10 +34,6 @@ h1 {
 
 .search-form {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 0;
-    margin-bottom: 16px;
 }
 
 .search-form input {
@@ -46,33 +42,10 @@ h1 {
     border-radius: 6px;
     width: 240px;
 }
-
-.search-form button {
-    padding: 7px 14px;
-    border: none;
-    border-radius: 6px;
-    background: var(--navy);
-    color: white;
-    cursor: pointer;
-}
-
-.search-form button:hover {
-    background: var(--navy-light);
-}
-
-.clear-search {
-    font-size: 13px;
-    color: var(--ink-soft);
-    text-decoration: none;
-}
-
-.clear-search:hover {
-    text-decoration: underline;
-}
-
 form {
     padding: 0 0 16px 0;
 }
+
 
 form input,
 form select {

@@ -48,11 +48,16 @@
             <label>
                 <input type = "text" name="description" placeholder="Description">
             </label>
-            <select>
-                <option value="Low"></option>
-                <option value="Medium"></option>
-                <option value="HIgh"></option>
-            </select>
+            <label>
+                <select>
+                    <option value="Low"></option>
+                    <option value="Medium"></option>
+                    <option value="HIgh"></option>
+                </select>
+            </label>
+            <input type="date" name="dueDate"/>
+            <button type="submit">Add Task</button>
+            <button type="button" class="cancel-btn"></button>
 
 
         </form>
@@ -204,6 +209,22 @@
 
     function closeTaskModal() {
         document.getElementById('taskOverlay').classList.remove('open');
+    }
+
+    function liveSearch(query){
+        var lowerQuery = query.toLowerCase();
+        var cards = document.querySelectorAll('.card');
+
+        cards.forEach(function(card){
+            var title = card.dataset.title.toLowerCase();
+            if (title.includes(lowerQuery)){
+                card.style.display = '';
+            }else {
+                card.style.display = 'none';
+            }
+
+        });
+
     }
 </script>
 
