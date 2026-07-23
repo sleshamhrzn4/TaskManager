@@ -144,8 +144,8 @@ public class TaskDAO {
      }
 
 
-     //SORTING
-    public List<TaskModel> getAllTaskByUser(int userId, String sortBy, String sortDir) throws Exception{
+
+    public List<TaskModel> getTasksPaged(int userId,String search,String priorityFilter,String statusFilter, String sortBy, String sortDir, int pageNumber, int pageSize) throws Exception{
         List <TaskModel> taskList = new ArrayList<>();
 
         String column;
@@ -153,24 +153,99 @@ public class TaskDAO {
             case "priority": column = "priority"; break;
             case "createdDate": column = "createdDate"; break;
             case "title": column = "title"; break;
-            default: column = "dueDate"; break;
+            case "dueDate": default: column = "dueDate"; break;
         }
 
         String direction = "DESC". equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
-        String sql = " SELECT * FROM tasks WHERE userId= ? ORDER BY "  +column + " " +direction;
 
-        try (Connection con = DBConfig.getConnection();
-             PreparedStatement pst = con.prepareStatement(sql)) {
+        StringBuilder sql = new StringBuilder("SELECT * FROM tasks WHERE userId =? ");
+        List<Object> params = new ArrayList<>();
+        params.add(userId);
 
-            pst.setInt(1, userId);
-
-            try (ResultSet rs = pst.executeQuery()) {
-                while (rs.next()) {
-                    taskList.add(mapRow(rs));
-                }
-            }
+        if (search !=null && !priorityFilter.equalsIgnoreCase("all")){
+            sql.append(" AND title LIKE ?");
+            params.add("%" + search.trim() + "%");
         }
+
+        if (priorityFilter != null && !priorityFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND priority = ?");
+            params.add(priorityFilter);
+        }
+        if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND status = ?");
+            params.add(statusFilter);
+        }
+
+        sql.append(" ORDER BY ").append(column).append(" ").append(direction);
+        sql.append(" LIMIT ? OFFSET ?");
+
+        int offset = (pageNumber - 1) * pageSize;
+
+        Connection con = DBConfig.getConnection();
+        PreparedStatement pst = con.prepareStatement(sql.toString());
+
+        int i = 1;
+        for (Object param : params) {
+            pst.setObject(i++, param);
+        }
+        pst.setInt(i++, pageSize);
+        pst.setInt(i, offset);
+
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            taskList.add(mapRow(rs));
+        }
+
+        rs.close();
+        pst.close();
+        con.close();
+
         return taskList;
+    }
+
+
+    public int getTotalTaskCount(int userId, String search, String priorityFilter, String statusFilter) throws Exception {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM tasks WHERE userId = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(userId);
+
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append(" AND title LIKE ?");
+            params.add("%" + search.trim() + "%");
+        }
+        if (priorityFilter != null && !priorityFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND priority = ?");
+            params.add(priorityFilter);
+        }
+        if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND status = ?");
+            params.add(statusFilter);
+        }
+
+        Connection con = DBConfig.getConnection();
+        PreparedStatement pst = con.prepareStatement(sql.toString());
+
+        int i = 1;
+        for (Object param : params) {
+            pst.setObject(i++, param);
+        }
+
+        ResultSet rs = pst.executeQuery();
+        int count = 0;
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+
+        rs.close();
+        pst.close();
+        con.close();
+
+        return count;
+    }
+
+
+
+
 
     }
 
