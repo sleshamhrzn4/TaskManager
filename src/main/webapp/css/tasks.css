@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+/* ===== TEGER brand palette ===== */
 :root {
     --navy: #14304D;
     --navy-light: #1E4066;
@@ -33,7 +33,7 @@ h1 {
 }
 
 .search-form {
-    display: flex;
+    margin-bottom: 16px;
 }
 
 .search-form input {
@@ -42,10 +42,10 @@ h1 {
     border-radius: 6px;
     width: 240px;
 }
+
 form {
     padding: 0 0 16px 0;
 }
-
 
 form input,
 form select {
@@ -195,6 +195,88 @@ hr {
     background: var(--red);
 }
 
+/* ===== Task list page (search/filter/sort + table + pagination) ===== */
+.list-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.list-controls input,
+.list-controls select {
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+}
+
+.list-controls button {
+    padding: 7px 16px;
+    border: none;
+    border-radius: 6px;
+    background: var(--blue);
+    color: white;
+    cursor: pointer;
+}
+
+.list-controls button:hover {
+    background: var(--blue-dark);
+}
+
+.task-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.task-table th {
+    text-align: left;
+    background: #E8EDF3;
+    color: var(--navy);
+    font-size: 13px;
+    padding: 10px 12px;
+}
+
+.task-table td {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.empty-row {
+    text-align: center;
+    color: var(--ink-soft);
+    padding: 20px;
+}
+
+.pagination {
+    display: flex;
+    gap: 6px;
+    margin-top: 16px;
+}
+
+.pagination a {
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+}
+
+.pagination a:hover {
+    background: #E8EDF3;
+}
+
+.pagination a.active {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+}
+
+/* ===== Task detail / edit modal ===== */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -306,7 +388,7 @@ hr {
     background: #FCEAEA;
 }
 
-
+/* ===== App layout (sidebar + main content) ===== */
 .app-layout {
     display: flex;
     min-height: 100vh;
@@ -378,6 +460,7 @@ hr {
     color: #FFFFFF;
 }
 
+/* ===== Main content / dashboard ===== */
 .main-content {
     flex-grow: 1;
     padding: 32px 40px;
@@ -449,6 +532,7 @@ hr {
     background: var(--blue-dark);
 }
 
+/* ===== Responsive ===== */
 @media (max-width: 700px) {
     .app-layout {
         flex-direction: column;

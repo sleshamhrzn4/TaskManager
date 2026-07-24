@@ -3,32 +3,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
+    <title>TEGER | Dashboard</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tasks.css">
 </head>
 <body>
 
 <div class="app-layout">
 
-
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-        <div class="sidebar-brand">
-            <a href="${pageContext.request.contextPath}/dashboard" class="nav-item">
-                <img src="${pageContext.request.contextPath}/tegar.png"  alt="dashboard" style="width: 200px; height: auto;">
-
-            </a>
-
-        </div>
+        <div class="sidebar-brand"><span class="check">&#10003;</span> TEGER</div>
 
         <nav class="sidebar-nav">
             <a href="${pageContext.request.contextPath}/dashboard" class="active">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/task">My Tasks</a>
+            <a href="${pageContext.request.contextPath}/tasks">Board</a>
+            <a href="${pageContext.request.contextPath}/tasks">All Tasks</a>
         </nav>
 
         <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>
     </aside>
 
-
+    <!-- MAIN CONTENT -->
     <main class="main-content">
         <h1>Dashboard</h1>
         <p class="welcome-text">Welcome back, ${sessionScope.username}</p>
@@ -39,7 +34,7 @@
                 <p class="stat-label">Total</p>
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card completed">
                 <p class="stat-number">${completedCount}</p>
                 <p class="stat-label">Completed</p>
             </div>
@@ -49,7 +44,7 @@
                 <p class="stat-label">Pending</p>
             </div>
 
-            <div class="stat-card">
+            <div class="stat-card overdue">
                 <p class="stat-number">${overdueCount}</p>
                 <p class="stat-label">Overdue</p>
             </div>

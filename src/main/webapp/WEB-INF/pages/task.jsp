@@ -12,21 +12,20 @@
 
 <div class="app-layout">
 
+    <!-- SIDEBAR -->
     <aside class="sidebar">
-        <div class="sidebar-brand"><a href="${pageContext.request.contextPath}/dashboard" class="nav-item">
-            <img src="${pageContext.request.contextPath}/tegar.png"  alt="dashboard" style="width: 200px; height: auto;">
-
-        </a>
-        </div>
+        <div class="sidebar-brand"><span class="check">&#10003;</span> TEGER</div>
 
         <nav class="sidebar-nav">
             <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/task" class="active">My Tasks</a>
+            <a href="${pageContext.request.contextPath}/task" class="active">Board</a>
+            <a href="${pageContext.request.contextPath}/tasklist">All Tasks</a>
         </nav>
 
         <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main class="main-content">
 
         <div class="page-header">
@@ -34,34 +33,24 @@
             <button type="button" class="add-task-toggle" onclick="toggleAddForm()">+ Add Task</button>
         </div>
 
+        <!-- Live search -->
         <div class="search-form">
-            <input type="text" id="liveSearchInput" placeholder="Search tasks..." oninput="liveSearch(this.value)">
-
+            <input type="text" id="liveSearchInput" placeholder="Search tasks..." oninput="liveSearch(this.value)"/>
         </div>
 
-
-        <form id="addTaskForm" action="$pageContext.request.contextPath}/task" method="post" class="add-task-form" >
+        <form id="addTaskForm" action="${pageContext.request.contextPath}/task" method="post" class="add-task-form">
             <input type="hidden" name="action" value="add"/>
-            <label>
-                <input type="text" name="title" placeholder="Task title" required/>
-            </label>
-            <label>
-                <input type = "text" name="description" placeholder="Description">
-            </label>
-            <label>
-                <select>
-                    <option value="Low"></option>
-                    <option value="Medium"></option>
-                    <option value="HIgh"></option>
-                </select>
-            </label>
+            <input type="text" name="title" placeholder="Task title" required/>
+            <input type="text" name="description" placeholder="Description"/>
+            <select name="priority">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+            </select>
             <input type="date" name="dueDate"/>
             <button type="submit">Add Task</button>
-            <button type="button" class="cancel-btn"></button>
-
-
+            <button type="button" class="cancel-btn" onclick="toggleAddForm()">Cancel</button>
         </form>
-
 
         <hr/>
 
@@ -88,6 +77,7 @@
                 </c:forEach>
             </div>
 
+            <!-- IN PROGRESS -->
             <div class="column">
                 <div class="column-header">
                     <h2>In Progress</h2>
@@ -108,7 +98,7 @@
                 </c:forEach>
             </div>
 
-
+            <!-- DONE -->
             <div class="column">
                 <div class="column-header">
                     <h2>Done</h2>
@@ -132,7 +122,7 @@
     </main>
 </div>
 
-
+<!-- TASK DETAIL / EDIT POPUP -->
 <div id="taskOverlay" class="modal-overlay">
     <div class="modal">
         <div class="modal-header">
@@ -211,20 +201,18 @@
         document.getElementById('taskOverlay').classList.remove('open');
     }
 
-    function liveSearch(query){
+    function liveSearch(query) {
         var lowerQuery = query.toLowerCase();
         var cards = document.querySelectorAll('.card');
 
-        cards.forEach(function(card){
+        cards.forEach(function(card) {
             var title = card.dataset.title.toLowerCase();
-            if (title.includes(lowerQuery)){
+            if (title.includes(lowerQuery)) {
                 card.style.display = '';
-            }else {
+            } else {
                 card.style.display = 'none';
             }
-
         });
-
     }
 </script>
 
