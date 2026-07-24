@@ -16,7 +16,7 @@
     <div class="sidebar-brand"><span class="check">&#10003;</span> TEGER</div>
     <nav class="sidebar-nav">
       <a href="${pageContext.request.contextPath}/dashboard">Dashboard</a>
-      <a href="${pageContext.request.contextPath}/tasklist">Board</a>
+      <a href="${pageContext.request.contextPath}/task">Board</a>
       <a href="${pageContext.request.contextPath}/tasklist" class="active">All Tasks</a>
     </nav>
     <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>

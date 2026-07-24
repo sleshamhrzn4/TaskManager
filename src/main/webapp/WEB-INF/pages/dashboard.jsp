@@ -16,8 +16,8 @@
 
         <nav class="sidebar-nav">
             <a href="${pageContext.request.contextPath}/dashboard" class="active">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/tasks">Board</a>
-            <a href="${pageContext.request.contextPath}/tasks">All Tasks</a>
+            <a href="${pageContext.request.contextPath}/task">Board</a>
+            <a href="${pageContext.request.contextPath}/tasklist">All Tasks</a>
         </nav>
 
         <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>
