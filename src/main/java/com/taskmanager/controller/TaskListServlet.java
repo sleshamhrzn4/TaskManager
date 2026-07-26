@@ -79,6 +79,9 @@ public class TaskListServlet extends HttpServlet {
             req.setAttribute("sortBy", sortBy);
             req.setAttribute("sortDir", sortDir);
 
+            req.setAttribute("highlightedTitles", highlightedTitles);
+            req.setAttribute("highlightedDescriptions", highlightedDescriptions);
+
             req.getRequestDispatcher("/WEB-INF/pages/tasklist.jsp").forward(req, resp);
 
         } catch (Exception e) {

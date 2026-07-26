@@ -102,7 +102,7 @@
       </tbody>
     </table>
 
-    <!-- Pagination -->
+
     <div class="pagination">
       <c:forEach begin="1" end="${totalPages}" var="p">
         <a href="${pageContext.request.contextPath}/tasklist?page=${p}&search=${search}&priority=${priorityFilter}&status=${statusFilter}&sortBy=${sortBy}&sortDir=${sortDir}&overdue=${overdueOnly}"
