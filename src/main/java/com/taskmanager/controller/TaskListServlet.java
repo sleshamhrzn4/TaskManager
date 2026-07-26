@@ -11,7 +11,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 @WebServlet(urlPatterns = {"/tasklist"})
 public class TaskListServlet extends HttpServlet {
@@ -31,6 +34,7 @@ public class TaskListServlet extends HttpServlet {
             String statusFilter = req.getParameter("status");
             String sortBy = req.getParameter("sortBy");
             String sortDir = req.getParameter("sortDir");
+            boolean overdueOnly = "true".equals(req.getParameter("overdue")) || "on".equals(req.getParameter("overdue"));
 
             if (sortBy == null) sortBy = "dueDate";
             if (sortDir == null) sortDir = "ASC";
@@ -51,12 +55,20 @@ public class TaskListServlet extends HttpServlet {
 
             TaskDAO taskDAO = new TaskDAO();
             List<TaskModel> tasks = taskDAO.getTasksPaged(
-                    user.getUserId(), search, priorityFilter, statusFilter,
-                    sortBy, sortDir, pageNumber, pageSize);
+                    user.getUserId(), search, priorityFilter, statusFilter, overdueOnly, sortBy, sortDir, pageNumber, pageSize);
 
             int totalCount = taskDAO.getTotalTaskCount(user.getUserId(), search, priorityFilter, statusFilter);
             int totalPages = (int) Math.ceil((double) totalCount / pageSize);
             if (totalPages < 1) totalPages = 1;
+
+            Map<Integer, String> highlightedTitles = new HashMap<>();
+            Map<Integer, String> highlightedDescriptions = new HashMap<>();
+            for (TaskModel task : tasks) {
+                highlightedTitles.put(task.getTaskId(),
+                        highlight(task.getTitle(), search));
+                highlightedDescriptions.put(task.getTaskId(),
+                        highlight(task.getDescription(), search));
+            }
 
             req.setAttribute("tasks", tasks);
             req.setAttribute("currentPage", pageNumber);
@@ -74,5 +86,27 @@ public class TaskListServlet extends HttpServlet {
             req.setAttribute("errorMessage", "Could not load tasks.");
             req.getRequestDispatcher("/WEB-INF/pages/tasklist.jsp").forward(req, resp);
         }
+    }
+    private String highlight(String text, String searchTerm) {
+        if (text == null) return "";
+
+        String escaped = escapeHtml(text);
+
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return escaped;
+        }
+
+        String escapedTerm = escapeHtml(searchTerm.trim());
+        String pattern = "(?i)(" + Pattern.quote(escapedTerm) + ")";
+        return escaped.replaceAll(pattern, "<mark>$1</mark>");
+    }
+
+    private String escapeHtml(String s) {
+        if (s == null) return "";
+        return s.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }

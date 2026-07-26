@@ -7,6 +7,9 @@
 <head>
   <title>TEGER | All Tasks</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/tasks.css">
+  <style>
+    mark { background: #fff3a3; padding: 0 2px; border-radius: 2px; }
+  </style>
 </head>
 <body>
 
@@ -26,8 +29,8 @@
     <h1>All Tasks</h1>
 
     <!-- Search + Filter + Sort -->
-    <form action="${pageContext.request.contextPath}/tasks" method="get" class="list-controls">
-      <input type="text" name="search" placeholder="Search by title..." value="${search}"/>
+    <form action="${pageContext.request.contextPath}/tasklist" method="get" class="list-controls">
+      <input type="text" name="search" placeholder="Search title or description..." value="${search}"/>
 
       <select name="priority">
         <option value="all" ${priorityFilter == 'all' ? 'selected' : ''}>All Priorities</option>
@@ -55,6 +58,11 @@
         <option value="DESC" ${sortDir == 'DESC' ? 'selected' : ''}>Descending</option>
       </select>
 
+      <label>
+        <input type="checkbox" name="overdue" value="true" ${overdueOnly ? 'checked' : ''} />
+        Overdue only
+      </label>
+
       <button type="submit">Apply</button>
     </form>
 
@@ -77,8 +85,8 @@
       <tbody>
       <c:forEach var="task" items="${tasks}">
         <tr>
-          <td>${task.title}</td>
-          <td>${task.description}</td>
+          <td>${highlightedTitles[task.taskId]}</td>
+          <td>${highlightedDescriptions[task.taskId]}</td>
           <td><span class="dot dot-${fn:toLowerCase(task.priority)}"></span>${task.priority}</td>
           <td>${task.status}</td>
           <td>${task.dueDate}</td>
@@ -97,7 +105,7 @@
     <!-- Pagination -->
     <div class="pagination">
       <c:forEach begin="1" end="${totalPages}" var="p">
-        <a href="${pageContext.request.contextPath}/tasks?page=${p}&search=${search}&priority=${priorityFilter}&status=${statusFilter}&sortBy=${sortBy}&sortDir=${sortDir}"
+        <a href="${pageContext.request.contextPath}/tasklist?page=${p}&search=${search}&priority=${priorityFilter}&status=${statusFilter}&sortBy=${sortBy}&sortDir=${sortDir}&overdue=${overdueOnly}"
            class="${p == currentPage ? 'active' : ''}">
             ${p}
         </a>

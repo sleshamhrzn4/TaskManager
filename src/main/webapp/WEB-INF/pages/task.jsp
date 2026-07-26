@@ -167,6 +167,10 @@
                 <input type="date" id="modalDueDate" name="dueDate"/>
             </label>
 
+
+
+
+
             <div class="modal-actions">
                 <button type="submit" class="save-btn">Save</button>
             </div>
@@ -182,7 +186,7 @@
 
 <script>
     function toggleAddForm() {
-        document.getElementById('addTaskForm').classList.toggle('open');
+        document.getElementById('taskOverlay').classList.add('open');
     }
 
     function openTaskModal(card) {

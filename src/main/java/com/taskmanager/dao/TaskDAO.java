@@ -143,37 +143,46 @@ public class TaskDAO {
 
      }
 
+    public List<TaskModel> getTasksPaged(int userId, String search, String priorityFilter,
+                                         String statusFilter, boolean overdueOnly,
+                                         String sortBy, String sortDir,
+                                         int pageNumber, int pageSize) throws Exception {
 
-
-    public List<TaskModel> getTasksPaged(int userId,String search,String priorityFilter,String statusFilter, String sortBy, String sortDir, int pageNumber, int pageSize) throws Exception{
-        List <TaskModel> taskList = new ArrayList<>();
+        List<TaskModel> taskList = new ArrayList<>();
 
         String column;
-        switch (sortBy){
+        switch (sortBy) {
             case "priority": column = "priority"; break;
             case "createdDate": column = "createdDate"; break;
             case "title": column = "title"; break;
             case "dueDate": default: column = "dueDate"; break;
         }
 
-        String direction = "DESC". equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
+        String direction = "DESC".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM tasks WHERE userId =? ");
+        StringBuilder sql = new StringBuilder("SELECT * FROM tasks WHERE userId = ? ");
         List<Object> params = new ArrayList<>();
         params.add(userId);
 
-        if (search !=null && !priorityFilter.equalsIgnoreCase("all")){
-            sql.append(" AND title LIKE ?");
-            params.add("%" + search.trim() + "%");
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append(" AND (title LIKE ? OR description LIKE ?)");
+            String likeTerm = "%" + search.trim() + "%";
+            params.add(likeTerm);
+            params.add(likeTerm);
         }
 
         if (priorityFilter != null && !priorityFilter.equalsIgnoreCase("all")) {
             sql.append(" AND priority = ?");
             params.add(priorityFilter);
         }
+
         if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
             sql.append(" AND status = ?");
             params.add(statusFilter);
+        }
+
+        if (overdueOnly) {
+            sql.append(" AND dueDate < CURRENT_DATE AND status != 'done'");
         }
 
         sql.append(" ORDER BY ").append(column).append(" ").append(direction);
@@ -203,7 +212,54 @@ public class TaskDAO {
         return taskList;
     }
 
+    public int getTotalTaskCount(int userId, String search, String priorityFilter,
+                                 String statusFilter, boolean overdueOnly) throws Exception {
 
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM tasks WHERE userId = ?");
+        List<Object> params = new ArrayList<>();
+        params.add(userId);
+
+        if (search != null && !search.trim().isEmpty()) {
+            sql.append(" AND (title LIKE ? OR description LIKE ?)");
+            String likeTerm = "%" + search.trim() + "%";
+            params.add(likeTerm);
+            params.add(likeTerm);
+        }
+
+        if (priorityFilter != null && !priorityFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND priority = ?");
+            params.add(priorityFilter);
+        }
+
+        if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND status = ?");
+            params.add(statusFilter);
+        }
+
+        if (overdueOnly) {
+            sql.append(" AND dueDate < CURRENT_DATE AND status != 'done'");
+        }
+
+        Connection con = DBConfig.getConnection();
+        PreparedStatement pst = con.prepareStatement(sql.toString());
+
+        int i = 1;
+        for (Object param : params) {
+            pst.setObject(i++, param);
+        }
+
+        ResultSet rs = pst.executeQuery();
+        int count = 0;
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+
+        rs.close();
+        pst.close();
+        con.close();
+
+        return count;
+    }
     public int getTotalTaskCount(int userId, String search, String priorityFilter, String statusFilter) throws Exception {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM tasks WHERE userId = ?");
         List<Object> params = new ArrayList<>();
@@ -242,7 +298,6 @@ public class TaskDAO {
 
         return count;
     }
-
 
 
 
