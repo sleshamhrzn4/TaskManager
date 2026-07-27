@@ -28,6 +28,9 @@ public class TaskListServlet extends HttpServlet {
         }
         UserModel user = (UserModel) session.getAttribute("user");
 
+        boolean isAjax = "XMLHttpRequest".equals(req.getHeader("X-Requested-With"));
+        String targetPage = isAjax ? "/WEB-INF/pages/tasklist_fragment.jsp" : "/WEB-INF/pages/tasklist.jsp";
+
         try {
             String search = req.getParameter("search");
             String priorityFilter = req.getParameter("priority");
@@ -82,14 +85,15 @@ public class TaskListServlet extends HttpServlet {
             req.setAttribute("highlightedTitles", highlightedTitles);
             req.setAttribute("highlightedDescriptions", highlightedDescriptions);
 
-            req.getRequestDispatcher("/WEB-INF/pages/tasklist.jsp").forward(req, resp);
+            req.getRequestDispatcher(targetPage).forward(req, resp);
 
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("errorMessage", "Could not load tasks.");
-            req.getRequestDispatcher("/WEB-INF/pages/tasklist.jsp").forward(req, resp);
+            req.getRequestDispatcher(targetPage).forward(req, resp);
         }
     }
+
     private String highlight(String text, String searchTerm) {
         if (text == null) return "";
 
