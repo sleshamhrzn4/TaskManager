@@ -1,4 +1,4 @@
-/* ===== TEGER brand palette ===== */
+
 :root {
     --navy: #14304D;
     --navy-light: #1E4066;
@@ -68,46 +68,6 @@ form button:hover {
     background: var(--blue-dark);
 }
 
-.add-task-toggle {
-    background: var(--blue);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-.add-task-toggle:hover {
-    background: var(--blue-dark);
-}
-
-.add-task-form {
-    display: none;
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-}
-
-.add-task-form.open {
-    display: block;
-}
-
-.add-task-form input,
-.add-task-form select {
-    display: block;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 0 10px 0;
-}
-
-.cancel-btn {
-    background: none;
-    color: var(--ink-soft);
-    border: 1px solid var(--line);
-}
 
 .cancel-btn:hover {
     background: #F0F2F5;

@@ -12,7 +12,7 @@
 
 <div class="app-layout">
 
-    <!-- SIDEBAR -->
+
     <aside class="sidebar">
         <div class="sidebar-brand"><span class="check">&#10003;</span> TEGER</div>
 
@@ -25,7 +25,7 @@
         <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>
     </aside>
 
-    <!-- MAIN CONTENT -->
+
     <main class="main-content">
 
         <div class="page-header">
@@ -33,30 +33,48 @@
             <button type="button" class="add-task-toggle" onclick="toggleAddForm()">+ Add Task</button>
         </div>
 
-        <!-- Live search -->
+
         <div class="search-form">
             <input type="text" id="liveSearchInput" placeholder="Search tasks..." oninput="liveSearch(this.value)"/>
         </div>
 
-        <form id="addTaskForm" action="${pageContext.request.contextPath}/task" method="post" class="add-task-form">
-            <input type="hidden" name="action" value="add"/>
-            <input type="text" name="title" placeholder="Task title" required/>
-            <input type="text" name="description" placeholder="Description"/>
-            <select name="priority">
-                <option value="Low">Low</option>
-                <option value="Medium" selected>Medium</option>
-                <option value="High">High</option>
-            </select>
-            <input type="date" name="dueDate"/>
-            <button type="submit">Add Task</button>
-            <button type="button" class="cancel-btn" onclick="toggleAddForm()">Cancel</button>
-        </form>
-
+        <div id="addTaskOverlay" class="modal-overlay">
+            <div class="modal">
+                <div class="modal-header">
+                    <h2>Add Task</h2>
+                    <button type="button" class="close-btn" onclick="toggleAddForm()">&times;</button>
+                </div>
+                <form id="addTaskForm" action="${pageContext.request.contextPath}/task" method="post">
+                    <input type="hidden" name="action" value="add"/>
+                    <label>
+                        Title
+                        <input type="text" name="title" required/>
+                    </label>
+                    <label>
+                        Description
+                        <input type="text" name="description"/>
+                    </label>
+                    <label>
+                        Priority
+                        <select name="priority">
+                            <option value="Low">Low</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </label>
+                    <label>
+                        Due date
+                        <input type="date" name="dueDate"/>
+                    </label>
+                    <button type="submit" class="save-btn">Add Task</button>
+                </form>
+            </div>
+        </div>
         <hr/>
 
         <div class="board">
 
-            <!-- TO DO -->
+
             <div class="column">
                 <div class="column-header">
                     <h2>To Do</h2>
@@ -98,7 +116,7 @@
                 </c:forEach>
             </div>
 
-            <!-- DONE -->
+
             <div class="column">
                 <div class="column-header">
                     <h2>Done</h2>
@@ -122,7 +140,7 @@
     </main>
 </div>
 
-<!-- TASK DETAIL / EDIT POPUP -->
+
 <div id="taskOverlay" class="modal-overlay">
     <div class="modal">
         <div class="modal-header">
@@ -186,7 +204,7 @@
 
 <script>
     function toggleAddForm() {
-        document.getElementById('taskOverlay').classList.add('open');
+        document.getElementById('addTaskOverlay').classList.toggle('open');
     }
 
     function openTaskModal(card) {
