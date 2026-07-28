@@ -4,10 +4,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DBConfig {
-    private static final String URL= "jdbc:mysql://localhost:3306/taskmanager";
-    private static final String USER= "root";
-    private static final String PASSWORD= "";
-
+    private static final String URL = System.getProperty("db.url", "jdbc:mysql://localhost:3306/taskmanager");
+    private static final String USER = System.getProperty("db.user", "root");
+    private static final String PASSWORD= System.getProperty("db.password", "");
+    private static final String DRIVER =System.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
     public static Connection getConnection(){
         Connection conn= null ;
         try {

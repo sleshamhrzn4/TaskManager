@@ -28,9 +28,8 @@
   <main class="main-content">
     <h1>All Tasks</h1>
 
-    <!-- Search + Filter + Sort -->
-    <form action="${pageContext.request.contextPath}/tasklist" method="get" class="list-controls">
-      <input type="text" name="search" placeholder="Search title or description..." value="${search}"/>
+    <form id="listControlsForm" action="${pageContext.request.contextPath}/tasklist" method="get" class="list-controls">
+      <input type="text" id="searchInput" name="search" placeholder="Search title or description..." value="${search}"/>
 
       <select name="priority">
         <option value="all" ${priorityFilter == 'all' ? 'selected' : ''}>All Priorities</option>
@@ -60,7 +59,7 @@
 
       <label>
         <input type="checkbox" name="overdue" value="true" ${overdueOnly ? 'checked' : ''} />
-        Overdue only
+        Overdue
       </label>
 
       <button type="submit">Apply</button>
@@ -79,6 +78,7 @@
 <script>
   (function () {
     const searchInput = document.getElementById('searchInput');
+    const overdueCheckbox = document.querySelector('input[name="overdue"]');
     const form = document.getElementById('listControlsForm');
     const container = document.getElementById('taskListContainer');
     const clearLink = document.getElementById('clearSearchLink');
@@ -88,7 +88,8 @@
     let currentRequestId = 0;
 
     function updateClearLinkVisibility() {
-      clearLink.style.display = searchInput.value.trim() ? 'inline' : 'none';
+      const hasFilter = searchInput.value.trim() || overdueCheckbox.checked;
+      clearLink.style.display = hasFilter ? 'inline' : 'none';
     }
 
     function buildQuery() {
@@ -127,6 +128,10 @@
       debounceTimer = setTimeout(runSearch, 300);
     });
 
+    overdueCheckbox.addEventListener('change', function () {
+      updateClearLinkVisibility();
+      runSearch();
+    });
 
     updateClearLinkVisibility();
   })();
