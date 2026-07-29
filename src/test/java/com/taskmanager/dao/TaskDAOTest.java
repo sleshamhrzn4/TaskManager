@@ -79,4 +79,90 @@ class TaskDAOTest {
 
         assertNull(taskDAO.getTaskById(taskId));
     }
-}
+
+    private void insertSampleTasks() throws Exception{
+        TaskModel t1 = new TaskModel();
+        t1.setUserId(1);
+        t1.setTitle("Alpha task");
+        t1.setDescription("first");
+        t1.setPriority("Low");
+        t1.setStatus("todo");
+        t1.setCreatedDate(LocalDateTime.now());
+        t1.setDueDate(LocalDate.now().minusDays(2));
+        taskDAO.addTask(t1);
+
+        TaskModel t2 = new TaskModel();
+        t2.setUserId(1);
+        t2.setTitle("Beta task");
+        t2.setDescription("second");
+        t2.setPriority("High");
+        t2.setStatus("done");
+        t2.setCreatedDate(LocalDateTime.now());
+        t2.setDueDate(LocalDate.now().minusDays(1));
+        taskDAO.addTask(t2);
+
+        TaskModel t3 = new TaskModel();
+        t3.setUserId(1);
+        t3.setTitle("Gamma task");
+        t3.setDescription("third");
+        t3.setPriority("Medium");
+        t3.setStatus("todo");
+        t3.setCreatedDate(LocalDateTime.now());
+        t3.setDueDate(LocalDate.now().plusDays(5));
+        taskDAO.addTask(t3);
+    }
+
+    @Test
+    void getTasksPaged_sortByTitleAscending() throws Exception{
+        insertSampleTasks();
+
+        List<TaskModel> result = taskDAO.getTasksPaged(1,null, "all", "all" ,false,"title","ASC" ,1,10);
+        assertEquals(3,result.size());
+        assertEquals(3, result.size());
+        assertEquals("Alpha task", result.get(0).getTitle());
+        assertEquals("Beta task", result.get(1).getTitle());
+        assertEquals("Gamma task", result.get(2).getTitle());
+
+
+    }
+
+    @Test
+    void getTasksPaged_filterByPriority() throws Exception{
+        insertSampleTasks();
+
+        List<TaskModel> result = taskDAO.getTasksPaged(1,null, "High", "all", false, "title","ASC", 1,10);
+        assertEquals(1, result.size());
+        assertEquals("Beta task", result.get(0).getTitle());
+    }
+
+    @Test
+    void getTasksPaged_filtersByOverdueObly() throws Exception{
+        insertSampleTasks();
+
+        List<TaskModel> result = taskDAO.getTasksPaged(1,null,"all", "all" ,true, "title", "ASC", 1,10);
+        assertEquals(1, result.size());
+        assertEquals("Alpha task", result.get(0).getTitle());
+    }
+
+    @Test
+    void getTasksPaged_respectsPageSize() throws Exception {
+        insertSampleTasks();
+
+        List<TaskModel> page1 = taskDAO.getTasksPaged(
+                1, null, "all", "all", false, "title", "ASC", 1, 2);
+
+        assertEquals(2, page1.size());
+        assertEquals("Alpha task", page1.get(0).getTitle());
+        assertEquals("Beta task", page1.get(1).getTitle());
+    }
+
+    @Test
+    void getTotalTaskCount_matchesInsertedCount() throws Exception {
+        insertSampleTasks();
+
+        int count = taskDAO.getTotalTaskCount(1, null, "all", "all", false);
+
+        assertEquals(3, count);
+    }
+
+    }
