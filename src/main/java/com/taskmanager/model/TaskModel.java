@@ -6,12 +6,14 @@ import java.time.LocalDateTime;
 public class TaskModel {
     private int taskId;
     private int userId;
+    private int workspaceId;
     private String title;
     private String description;
     private String priority;
     private String status;
     private LocalDateTime createdDate;
     private LocalDate dueDate;
+
 
 
     public TaskModel(int taskId, int userId, String title, String description, String priority, String status, LocalDateTime createdDate, LocalDate dueDate){
@@ -38,6 +40,9 @@ public class TaskModel {
 
     public int getUserId() {
         return userId;
+    }
+    public int getWorkspaceId() {
+        return workspaceId;
     }
 
     public String getTitle() {
@@ -71,6 +76,9 @@ public class TaskModel {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+    public void setWorkspaceId(int workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public void setTitle(String title) {

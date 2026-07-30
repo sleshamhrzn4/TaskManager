@@ -10,20 +10,21 @@ import java.util.List;
 public class TaskDAO {
     public void addTask(TaskModel tasks) throws Exception {
         Connection con = DBConfig.getConnection();
-        String sql = "INSERT INTO tasks (userId, title, description, priority, status, createdDate, dueDate) VALUES (?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO tasks (userId,workspaceId, title, description, priority, status, createdDate, dueDate) VALUES (?,?,?,?,?,?,?,?)";
         PreparedStatement pst = con.prepareStatement(sql);
 
         pst.setInt(1, tasks.getUserId());
-        pst.setString(2, tasks.getTitle());
-        pst.setString(3, tasks.getDescription());
-        pst.setString(4, tasks.getPriority());
-        pst.setString(5, tasks.getStatus());
-        pst.setTimestamp(6, Timestamp.valueOf(tasks.getCreatedDate()));
+        pst.setInt(2,tasks.getWorkspaceId());
+        pst.setString(3, tasks.getTitle());
+        pst.setString(4, tasks.getDescription());
+        pst.setString(5, tasks.getPriority());
+        pst.setString(6, tasks.getStatus());
+        pst.setTimestamp(7, Timestamp.valueOf(tasks.getCreatedDate()));
 
         if (tasks.getDueDate() != null) {
-            pst.setDate(7, Date.valueOf(tasks.getDueDate()));
+            pst.setDate(8, Date.valueOf(tasks.getDueDate()));
         } else {
-            pst.setNull(7, Types.DATE);
+            pst.setNull(8, Types.DATE);
         }
 
         pst.executeUpdate();
@@ -37,6 +38,7 @@ public class TaskDAO {
         TaskModel task = new TaskModel();
         task.setTaskId(rs.getInt("taskId"));
         task.setUserId(rs.getInt("userId"));
+        task.setWorkspaceId(rs.getInt("workspaceId"));
         task.setTitle(rs.getString("title"));
         task.setDescription(rs.getString("description"));
         task.setPriority(rs.getString("priority"));
@@ -53,13 +55,14 @@ public class TaskDAO {
 
 
 
-     public List<TaskModel> getAllTaskByUser(int userId) throws Exception{
+     public List<TaskModel> getAllTaskByUser(int userId,int workspaceId) throws Exception{
          List<TaskModel> taskList= new ArrayList<>();
 
          Connection con= DBConfig.getConnection();
-         String sql= "SELECT * FROM tasks where UserId=?";
+         String sql= "SELECT * FROM tasks where UserId=? AND workspaceId=?";
          PreparedStatement pst= con.prepareStatement(sql);
          pst.setInt(1,userId);
+         pst.setInt(2,workspaceId);
 
          ResultSet rs= pst.executeQuery();
          while (rs.next()){
@@ -90,15 +93,16 @@ public class TaskDAO {
          return task;
      }
 
-        public List<TaskModel> searchTasks(int userId, String keyword) throws Exception {
+        public List<TaskModel> searchTasks(int userId,int workspaceId, String keyword) throws Exception {
             List<TaskModel> taskList = new ArrayList<>();
-            String sql = "SELECT * FROM tasks WHERE userId = ? AND title LIKE ?";
+            String sql = "SELECT * FROM tasks WHERE userId = ? AND workspaceId=? AND title LIKE ?";
 
             try (Connection con = DBConfig.getConnection();
                  PreparedStatement pst = con.prepareStatement(sql)) {
 
                 pst.setInt(1, userId);
-                pst.setString(2, "%" + keyword + "%");
+                pst.setInt(2,workspaceId);
+                pst.setString(3, "%" + keyword + "%");
 
                 ResultSet rs = pst.executeQuery();
                 while (rs.next()) {
@@ -143,7 +147,7 @@ public class TaskDAO {
 
      }
 
-    public List<TaskModel> getTasksPaged(int userId, String search, String priorityFilter,
+    public List<TaskModel> getTasksPaged(int userId, int workspaceId, String search, String priorityFilter,
                                          String statusFilter, boolean overdueOnly,
                                          String sortBy, String sortDir,
                                          int pageNumber, int pageSize) throws Exception {
@@ -160,9 +164,10 @@ public class TaskDAO {
 
         String direction = "DESC".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
 
-        StringBuilder sql = new StringBuilder("SELECT * FROM tasks WHERE userId = ? ");
+        StringBuilder sql = new StringBuilder("SELECT * FROM tasks WHERE userId = ? AND workspaceId=?");
         List<Object> params = new ArrayList<>();
         params.add(userId);
+        params.add(workspaceId);
 
         if (search != null && !search.trim().isEmpty()) {
             sql.append(" AND (title LIKE ? OR description LIKE ?)");
@@ -212,12 +217,13 @@ public class TaskDAO {
         return taskList;
     }
 
-    public int getTotalTaskCount(int userId, String search, String priorityFilter,
+    public int getTotalTaskCount(int userId,int workspaceId, String search, String priorityFilter,
                                  String statusFilter, boolean overdueOnly) throws Exception {
 
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM tasks WHERE userId = ?");
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM tasks WHERE userId = ? AND workspaceId=?");
         List<Object> params = new ArrayList<>();
         params.add(userId);
+        params.add(workspaceId);
 
         if (search != null && !search.trim().isEmpty()) {
             sql.append(" AND (title LIKE ? OR description LIKE ?)");
@@ -260,44 +266,7 @@ public class TaskDAO {
 
         return count;
     }
-    public int getTotalTaskCount(int userId, String search, String priorityFilter, String statusFilter) throws Exception {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM tasks WHERE userId = ?");
-        List<Object> params = new ArrayList<>();
-        params.add(userId);
 
-        if (search != null && !search.trim().isEmpty()) {
-            sql.append(" AND title LIKE ?");
-            params.add("%" + search.trim() + "%");
-        }
-        if (priorityFilter != null && !priorityFilter.equalsIgnoreCase("all")) {
-            sql.append(" AND priority = ?");
-            params.add(priorityFilter);
-        }
-        if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
-            sql.append(" AND status = ?");
-            params.add(statusFilter);
-        }
-
-        Connection con = DBConfig.getConnection();
-        PreparedStatement pst = con.prepareStatement(sql.toString());
-
-        int i = 1;
-        for (Object param : params) {
-            pst.setObject(i++, param);
-        }
-
-        ResultSet rs = pst.executeQuery();
-        int count = 0;
-        if (rs.next()) {
-            count = rs.getInt(1);
-        }
-
-        rs.close();
-        pst.close();
-        con.close();
-
-        return count;
-    }
 
 
 
