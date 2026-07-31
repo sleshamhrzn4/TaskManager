@@ -41,7 +41,7 @@ public class TaskServlet extends HttpServlet {
         try {
             switch (action) {
                 case "add":
-                    handleAdd(request, user.getUserId());
+                    handleAdd(request, user.getUserId(), user.getWorkspaceId());
                     break;
                 case "update":
                     handleUpdate(request);
@@ -66,9 +66,10 @@ public class TaskServlet extends HttpServlet {
         return (UserModel) session.getAttribute("user");
     }
 
-    private void handleAdd(HttpServletRequest request, int userId) throws Exception {
+    private void handleAdd(HttpServletRequest request, int userId, int workspaceId) throws Exception {
         TaskModel task = new TaskModel();
         task.setUserId(userId);
+        task.setWorkspaceId(workspaceId);
         task.setTitle(request.getParameter("title"));
         task.setDescription(request.getParameter("description"));
         task.setPriority(request.getParameter("priority"));
@@ -119,12 +120,13 @@ public class TaskServlet extends HttpServlet {
         List<TaskModel> doneTasks = new ArrayList<>();
 
         try {
-            List<TaskModel> allTasks = taskDAO.getAllTaskByUser(user.getUserId());
+            List<TaskModel> allTasks = taskDAO.getAllTaskByUser(user.getUserId(), user.getWorkspaceId());
             for (TaskModel task : allTasks) {
                 switch (task.getStatus()) {
                     case "todo":
                         todoTasks.add(task);
                         break;
+
                     case "inprogress":
                         progressTasks.add(task);
                         break;

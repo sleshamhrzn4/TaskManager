@@ -28,7 +28,7 @@ import java.util.List;
 
             try {
                 TaskDAO taskDAO = new TaskDAO();
-                List<TaskModel> allTasks = taskDAO.getAllTaskByUser(user.getUserId());
+                List<TaskModel> allTasks = taskDAO.getAllTaskByUser(user.getUserId(), user.getWorkspaceId());
 
                 int total = allTasks.size();
                 int completed = 0, pending = 0, overdue = 0;

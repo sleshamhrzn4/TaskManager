@@ -1,26 +1,53 @@
 package com.taskmanager.utils;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Properties;
 
 public class DBConfig {
-    private static final String URL = System.getProperty("db.url", "jdbc:mysql://localhost:3306/taskmanager");
-    private static final String USER = System.getProperty("db.user", "root");
-    private static final String PASSWORD= System.getProperty("db.password", "");
-    private static final String DRIVER =System.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");
-    public static Connection getConnection(){
-        Connection conn= null ;
-        try {
 
+    private static final HikariDataSource dataSource;
 
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection(URL, USER, PASSWORD);
-
-            System.out.println("Connection to DB");
-        }catch (Exception e){
-            System.out.println("DB Connection Failed");
-            e.printStackTrace();
+    static {
+        Properties props = new Properties();
+        try (InputStream input = DBConfig.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                throw new RuntimeException("db.properties not found on classpath");
+            }
+            props.load(input);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load db.properties", e);
         }
-        return conn;
+
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl(props.getProperty("db.url"));
+        config.setUsername(props.getProperty("db.username"));
+        config.setPassword(props.getProperty("db.password"));
+        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+
+        config.setMaximumPoolSize(Integer.parseInt(props.getProperty("db.pool.size", "10")));
+        config.setMinimumIdle(2);
+        config.setConnectionTimeout(30000);
+        config.setIdleTimeout(600000);
+        config.setMaxLifetime(1800000);
+        config.setPoolName("TMS-HikariPool");
+
+        dataSource = new HikariDataSource(config);
+    }
+
+    private DBConfig() {
+    }
+
+    public static HikariDataSource getDataSource() {
+        return dataSource;
+    }
+
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }

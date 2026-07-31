@@ -38,27 +38,32 @@ rs.close();
     public UserModel getUserByEmail(String email)
         throws Exception{
         UserModel user= null;
-        Connection con = DBConfig.getConnection();
-        String sql ="SELECT * FROM users WHERE userEmail=?";
+        String sql = "SELECT u.userId, u.userName, u.userEmail, u.password, u.role, w.workspaceId " +
+                "FROM users u " +
+                "JOIN organization_users ou ON u.userId = ou.userId " +
+                "JOIN workspaces w ON w.organizationId = ou.organizationId " +
+                "WHERE u.userEmail = ? " +
+                "ORDER BY w.workspaceId ASC " +
+                "LIMIT 1";
 
-        PreparedStatement pst= con.prepareStatement(sql);
-        pst.setString(1, email);
-        ResultSet rs = pst.executeQuery();
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-        if(rs.next()){
-            user = new UserModel();
-            user.setUserId(rs.getInt("userId"));
-            user.setUserName(rs.getString("userName"));
-            user.setUserEmail(rs.getString("userEmail"));
-            user.setPassword(rs.getString("password"));
-            user.setRole(rs.getString("role"));
+            pst.setString(1, email);
 
-
-
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    user = new UserModel();
+                    user.setUserId(rs.getInt("userId"));
+                    user.setUserName(rs.getString("userName"));
+                    user.setUserEmail(rs.getString("userEmail"));
+                    user.setPassword(rs.getString("password"));
+                    user.setRole(rs.getString("role"));
+                    user.setWorkspaceId(rs.getInt("workspaceId"));
+                }
+            }
         }
-        rs.close();
-        pst.close();
-        con.close();
+
         return user;
 
     }

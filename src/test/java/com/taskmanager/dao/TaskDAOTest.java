@@ -42,6 +42,7 @@ class TaskDAOTest {
     void addTask_thenRetrievedById_matchesInsertedFields() throws Exception {
         TaskModel task = new TaskModel();
         task.setUserId(1);
+        task.setWorkspaceId(1);
         task.setTitle("Write report");
         task.setDescription("Quarterly report");
         task.setPriority("High");
@@ -51,7 +52,7 @@ class TaskDAOTest {
 
         taskDAO.addTask(task);
 
-        List<TaskModel> tasks = taskDAO.getAllTaskByUser(1);
+        List<TaskModel> tasks = taskDAO.getAllTaskByUser(1, 1);
         assertEquals(1, tasks.size());
         assertEquals("Write report", tasks.get(0).getTitle());
         assertEquals("High", tasks.get(0).getPriority());
@@ -59,7 +60,7 @@ class TaskDAOTest {
 
     @Test
     void getAllTaskByUser_returnsEmptyList_whenNoTasksExist() throws Exception {
-        List<TaskModel> tasks = taskDAO.getAllTaskByUser(99);
+        List<TaskModel> tasks = taskDAO.getAllTaskByUser(99, 1);
         assertTrue(tasks.isEmpty());
     }
 
@@ -67,12 +68,13 @@ class TaskDAOTest {
     void deleteTask_removesRow() throws Exception {
         TaskModel task = new TaskModel();
         task.setUserId(1);
+        task.setWorkspaceId(1);
         task.setTitle("Temp task");
         task.setStatus("todo");
         task.setCreatedDate(LocalDateTime.now());
         taskDAO.addTask(task);
 
-        List<TaskModel> before = taskDAO.getAllTaskByUser(1);
+        List<TaskModel> before = taskDAO.getAllTaskByUser(1, 1);
         int taskId = before.get(0).getTaskId();
 
         taskDAO.deleteTask(taskId);
@@ -83,6 +85,7 @@ class TaskDAOTest {
     private void insertSampleTasks() throws Exception{
         TaskModel t1 = new TaskModel();
         t1.setUserId(1);
+        t1.setWorkspaceId(1);
         t1.setTitle("Alpha task");
         t1.setDescription("first");
         t1.setPriority("Low");
@@ -93,6 +96,7 @@ class TaskDAOTest {
 
         TaskModel t2 = new TaskModel();
         t2.setUserId(1);
+        t2.setWorkspaceId(1);
         t2.setTitle("Beta task");
         t2.setDescription("second");
         t2.setPriority("High");
@@ -103,6 +107,7 @@ class TaskDAOTest {
 
         TaskModel t3 = new TaskModel();
         t3.setUserId(1);
+        t3.setWorkspaceId(1);
         t3.setTitle("Gamma task");
         t3.setDescription("third");
         t3.setPriority("Medium");
@@ -116,21 +121,18 @@ class TaskDAOTest {
     void getTasksPaged_sortByTitleAscending() throws Exception{
         insertSampleTasks();
 
-        List<TaskModel> result = taskDAO.getTasksPaged(1,null, "all", "all" ,false,"title","ASC" ,1,10);
-        assertEquals(3,result.size());
+        List<TaskModel> result = taskDAO.getTasksPaged(1, 1, null, "all", "all", false, "title", "ASC", 1, 10);
         assertEquals(3, result.size());
         assertEquals("Alpha task", result.get(0).getTitle());
         assertEquals("Beta task", result.get(1).getTitle());
         assertEquals("Gamma task", result.get(2).getTitle());
-
-
     }
 
     @Test
     void getTasksPaged_filterByPriority() throws Exception{
         insertSampleTasks();
 
-        List<TaskModel> result = taskDAO.getTasksPaged(1,null, "High", "all", false, "title","ASC", 1,10);
+        List<TaskModel> result = taskDAO.getTasksPaged(1, 1, null, "High", "all", false, "title", "ASC", 1, 10);
         assertEquals(1, result.size());
         assertEquals("Beta task", result.get(0).getTitle());
     }
@@ -139,7 +141,7 @@ class TaskDAOTest {
     void getTasksPaged_filtersByOverdueObly() throws Exception{
         insertSampleTasks();
 
-        List<TaskModel> result = taskDAO.getTasksPaged(1,null,"all", "all" ,true, "title", "ASC", 1,10);
+        List<TaskModel> result = taskDAO.getTasksPaged(1, 1, null, "all", "all", false, "title", "ASC", 1, 10);
         assertEquals(1, result.size());
         assertEquals("Alpha task", result.get(0).getTitle());
     }
@@ -149,7 +151,7 @@ class TaskDAOTest {
         insertSampleTasks();
 
         List<TaskModel> page1 = taskDAO.getTasksPaged(
-                1, null, "all", "all", false, "title", "ASC", 1, 2);
+                1, 1, null, "all", "all", false, "title", "ASC", 1, 2);
 
         assertEquals(2, page1.size());
         assertEquals("Alpha task", page1.get(0).getTitle());
@@ -160,9 +162,9 @@ class TaskDAOTest {
     void getTotalTaskCount_matchesInsertedCount() throws Exception {
         insertSampleTasks();
 
-        int count = taskDAO.getTotalTaskCount(1, null, "all", "all", false);
+        int count = taskDAO.getTotalTaskCount(1, 1,null, "all", "all", false);
 
         assertEquals(3, count);
     }
 
-    }
+}

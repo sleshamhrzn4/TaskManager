@@ -2,6 +2,7 @@ package com.taskmanager.model;
 
 public class UserModel {
     private int userId;
+    private int workspaceId;
     private String userName;
     private String userEmail;
     private String password;
@@ -30,6 +31,9 @@ public class UserModel {
         return userName;
 
     }
+    public int getWorkspaceId() {
+        return workspaceId;
+    }
 
     public String getUserEmail() {
         return userEmail;
@@ -46,6 +50,9 @@ public class UserModel {
 
     public void setUserId(int userId) {
         this.userId = userId;
+    }
+    public void setWorkspaceId(int workspaceId) {
+        this.workspaceId = workspaceId;
     }
 
     public void setUserName(String userName){

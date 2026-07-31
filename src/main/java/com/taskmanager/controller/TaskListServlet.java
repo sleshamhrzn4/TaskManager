@@ -55,12 +55,12 @@ public class TaskListServlet extends HttpServlet {
                 }
             }
             int pageSize = 5;
-
             TaskDAO taskDAO = new TaskDAO();
-            List<TaskModel> tasks = taskDAO.getTasksPaged(
-                    user.getUserId(), search, priorityFilter, statusFilter, overdueOnly, sortBy, sortDir, pageNumber, pageSize);
 
-            int totalCount = taskDAO.getTotalTaskCount(user.getUserId(), search, priorityFilter, statusFilter);
+            List<TaskModel> tasks = taskDAO.getTasksPaged(
+                    user.getUserId(), user.getWorkspaceId(), search, priorityFilter, statusFilter, overdueOnly, sortBy, sortDir, pageNumber, pageSize);
+
+            int totalCount = taskDAO.getTotalTaskCount(user.getUserId(), user.getWorkspaceId(), search, priorityFilter, statusFilter, overdueOnly);
             int totalPages = (int) Math.ceil((double) totalCount / pageSize);
             if (totalPages < 1) totalPages = 1;
 
