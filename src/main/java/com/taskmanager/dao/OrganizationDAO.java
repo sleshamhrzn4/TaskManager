@@ -28,7 +28,7 @@ public class OrganizationDAO {
 }
 
     public OrganizationModel findOrganizationById(long organizationId) throws Exception{
-        String sql= "SELECT organizationId,organozationNamr, subscriptionPlan,createdDate FROM organizations WHERE organizationId=?";
+        String sql= "SELECT organizationId,organozationName, subscriptionPlan,createdDate FROM organizations WHERE organizationId=?";
 
         try (Connection con= DBConfig.getConnection();
             PreparedStatement pst = con.prepareStatement(sql)){
@@ -52,7 +52,7 @@ public class OrganizationDAO {
     }
 
     public void insertOrganizationUser(long organizationId, long userId, String role) throws Exception {
-        String sql = "INSERT INTO organization_users (organizationId, userId, role, joinedDate) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO organization_users (organizationId, userId, role) VALUES (?, ?, ?)";
 
         try (Connection con = DBConfig.getConnection();
              PreparedStatement pst = con.prepareStatement(sql)) {
@@ -60,12 +60,27 @@ public class OrganizationDAO {
             pst.setLong(1, organizationId);
             pst.setLong(2, userId);
             pst.setString(3, role);
-            pst.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+
 
             pst.executeUpdate();
         }
     }
 
+
+    public boolean existsByName(String organizationName) throws Exception {
+        String sql = "SELECT COUNT(*) FROM organizations WHERE organizationName = ?";
+
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setString(1, organizationName);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        }
+    }
 
 
 
