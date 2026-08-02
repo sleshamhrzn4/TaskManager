@@ -7,7 +7,7 @@ import java.util.Map;
 public class RegisterService {
 
 
-    public Map<String,String> validate(String userName, String userEmail, String password){
+    public Map<String,String> validate(String userName, String userEmail, String password, long organizationId){
         Map<String , String> errors = new HashMap<>();
 
         if (userName == null || userName.trim().isEmpty()){

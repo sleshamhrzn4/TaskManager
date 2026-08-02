@@ -30,9 +30,10 @@ public class RegisterServlet extends HttpServlet  {
         String userName = req.getParameter("userName");
         String userEmail = req.getParameter("userEmail");
         String password = req.getParameter("password");
+        long organizationId = 1L;
 
         RegisterService service = new RegisterService();
-        Map<String, String> errors = service.validate(userName, userEmail, password);
+        Map<String, String> errors = service.validate(userName, userEmail, password,organizationId);
 
         if (!errors.isEmpty()) {
             req.setAttribute("errors", errors);
@@ -48,7 +49,7 @@ public class RegisterServlet extends HttpServlet  {
             String hashedPassword = PasswordUtil.getHashPassword(password);
 
             UserDAO userDAO = new UserDAO();
-            userDAO.insertUser(userName, userEmail, hashedPassword, "user");
+            userDAO.insertUser(userName, userEmail, hashedPassword, "user", organizationId);
 
             resp.sendRedirect(req.getContextPath() + "/login");
 
