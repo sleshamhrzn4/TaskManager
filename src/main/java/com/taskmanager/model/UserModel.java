@@ -8,6 +8,8 @@ public class UserModel {
     private String password;
     private String role;
 
+
+
     public UserModel(int userId, String userName, String userEmail, String password,
                      String role) {
         this.userId = userId;
@@ -17,6 +19,7 @@ public class UserModel {
         this.role = role;
 
     }
+
 
     public UserModel() {
 

@@ -3,35 +3,58 @@ package com.taskmanager.dao;
 import com.taskmanager.model.UserModel;
 import com.taskmanager.utils.DBConfig;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 
 public class UserDAO {
 
-    public void insertUser( String userName, String userEmail, String password, String role)
-    throws Exception{
-        Connection con= DBConfig.getConnection();
+    public void insertUser(String userName, String userEmail, String password, String role, long organizationId) throws Exception {
+        String insertUserSql = "INSERT INTO users (userName, userEmail, password, role) VALUES (?,?,?,?)";
+        String insertOrgUserSql = "INSERT INTO organization_users (organizationId, userId, role) VALUES (?,?,?)";
 
-        String sql = "INSERT INTO users ( userName, userEmail, password, role) " + "VALUES (?,?,?,?)";
+        Connection con = null;
+        try {
+            con = DBConfig.getConnection();
+            con.setAutoCommit(false); // start transaction — both inserts succeed together, or neither does
 
-        PreparedStatement pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-        pst.setString(1,userName);
-        pst.setString(2,userEmail);
-        pst.setString(3,password);
-        pst.setString(4,"user");
+            int newUserId;
+            try (PreparedStatement pst = con.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
+                pst.setString(1, userName);
+                pst.setString(2, userEmail);
+                pst.setString(3, password);
+                pst.setString(4, role != null ? role : "user");
+                pst.executeUpdate();
 
-        pst.executeUpdate();
-        ResultSet rs = pst.getGeneratedKeys();
-        if (rs.next()){
-            System.out.println("New user inserted with ID:" + rs.getInt(1));
+                try (ResultSet rs = pst.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        newUserId = rs.getInt(1);
+                        System.out.println("New user inserted with ID:" + newUserId);
+                    } else {
+                        throw new SQLException("Failed to retrieve generated userId");
+                    }
+                }
+            }
+
+            try (PreparedStatement pst = con.prepareStatement(insertOrgUserSql)) {
+                pst.setLong(1, organizationId);
+                pst.setInt(2, newUserId);
+                pst.setString(3, "member");
+                pst.executeUpdate();
+            }
+
+            con.commit();
+
+        } catch (Exception e) {
+            if (con != null) {
+                con.rollback();
+            }
+            throw e;
+        } finally {
+            if (con != null) {
+                con.setAutoCommit(true);
+                con.close();
+            }
         }
-rs.close();
-        pst.close();
-        con.close();
-
     }
 
 
