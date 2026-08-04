@@ -1,13 +1,17 @@
 package com.taskmanager.controller;
 
 import com.taskmanager.dao.UserDAO;
+import com.taskmanager.exception.ValidationException;
+import com.taskmanager.model.UserModel;
 import com.taskmanager.service.RegisterService;
+import com.taskmanager.service.UserService;
 import com.taskmanager.utils.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 
 import java.io.IOException;
@@ -15,15 +19,14 @@ import java.io.Serial;
 import java.util.Map;
 
 @WebServlet(asyncSupported = true, urlPatterns = {"/register"})
-public class RegisterServlet extends HttpServlet  {
+public class RegisterServlet extends HttpServlet {
     @Serial
     public static final long serialVersionUID = 1L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/pages/register.jsp").forward(req,resp);
+        req.getRequestDispatcher("/WEB-INF/pages/register.jsp").forward(req, resp);
     }
-
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,34 +35,26 @@ public class RegisterServlet extends HttpServlet  {
         String password = req.getParameter("password");
         long organizationId = 1L;
 
-        RegisterService service = new RegisterService();
-        Map<String, String> errors = service.validate(userName, userEmail, password,organizationId);
-
-        if (!errors.isEmpty()) {
-            req.setAttribute("errors", errors);
-            req.setAttribute("oldUserName", userName);
-            req.setAttribute("oldUserEmail", userEmail);
-
-            req.getRequestDispatcher("/WEB-INF/pages/register.jsp")
-                    .forward(req, resp);
-            return;
-        }
+        UserService userService = new UserService();
 
         try {
-            String hashedPassword = PasswordUtil.getHashPassword(password);
-
-            UserDAO userDAO = new UserDAO();
-            userDAO.insertUser(userName, userEmail, hashedPassword, "user", organizationId);
-
+            userService.registerUser(userName, userEmail, password, organizationId);
             resp.sendRedirect(req.getContextPath() + "/login");
+
+        } catch (ValidationException e) {
+            if (e.getFieldErrors() != null) {
+                req.setAttribute("errors", e.getFieldErrors());
+            } else {
+                req.setAttribute("errorMessage", e.getMessage());
+            }
+            req.setAttribute("oldUserName", userName);
+            req.setAttribute("oldUserEmail", userEmail);
+            req.getRequestDispatcher("/WEB-INF/pages/register.jsp").forward(req, resp);
 
         } catch (Exception e) {
             e.printStackTrace();
             req.setAttribute("errorMessage", "Registration failed. Please try again.");
-            req.getRequestDispatcher("/WEB-INF/pages/register.jsp")
-                    .forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/pages/register.jsp").forward(req, resp);
         }
     }
-
-}
-
+    }

@@ -15,7 +15,7 @@ public class UserDAO {
         Connection con = null;
         try {
             con = DBConfig.getConnection();
-            con.setAutoCommit(false); // start transaction — both inserts succeed together, or neither does
+            con.setAutoCommit(false);
 
             int newUserId;
             try (PreparedStatement pst = con.prepareStatement(insertUserSql, Statement.RETURN_GENERATED_KEYS)) {
@@ -58,8 +58,7 @@ public class UserDAO {
     }
 
 
-    public UserModel getUserByEmail(String email)
-        throws Exception{
+    public UserModel getUserByEmail(String email) throws Exception{
         UserModel user= null;
         String sql = "SELECT u.userId, u.userName, u.userEmail, u.password, u.role, w.workspaceId " +
                 "FROM users u " +
@@ -89,5 +88,61 @@ public class UserDAO {
 
         return user;
 
+
+        }
+    public boolean existsByEmail(String email) throws Exception {
+        String sql = "SELECT COUNT(*) FROM users WHERE userEmail=?";
+
+        try(Connection con = DBConfig.getConnection();
+        PreparedStatement pst=con.prepareStatement(sql)){
+            pst.setString(1,email);
+
+            try(ResultSet rs = pst.executeQuery()){
+                if(rs.next()){
+                    return  rs.getInt(1)>0;
+                }
+
+                return false;
+            }
+
+        }
     }
-}
+
+    public UserModel getUserById(int userId) throws Exception {
+        UserModel user = null;
+        String sql = "SELECT u.userId, u.userName, u.userEmail, u.password, u.role, w.workspaceId " +
+                "FROM users u " +
+                "JOIN organization_users ou ON u.userId = ou.userId " +
+                "JOIN workspaces w ON w.organizationId = ou.organizationId " +
+                "WHERE u.userId = ? " +
+                "ORDER BY w.workspaceId ASC " +
+                "LIMIT 1";
+
+        try (Connection con = DBConfig.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
+
+            pst.setInt(1, userId);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    user = new UserModel();
+                    user.setUserId(rs.getInt("userId"));
+                    user.setUserName(rs.getString("userName"));
+                    user.setUserEmail(rs.getString("userEmail"));
+                    user.setPassword(rs.getString("password"));
+                    user.setRole(rs.getString("role"));
+                    user.setWorkspaceId(rs.getInt("workspaceId"));
+                }
+            }
+        }
+        return user;
+    }
+
+
+
+
+
+
+
+    }
+

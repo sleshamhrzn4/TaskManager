@@ -1,7 +1,9 @@
 package com.taskmanager.controller;
 
+import com.taskmanager.exception.ValidationException;
 import com.taskmanager.model.UserModel;
 import com.taskmanager.service.LoginService;
+import com.taskmanager.service.UserService;
 import
         jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -28,39 +30,25 @@ public class LoginServlet extends HttpServlet {
         req.getRequestDispatcher("/WEB-INF/pages/login.jsp").forward(req,resp);
     }
 
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
 
-        if (email == null || email.trim().isEmpty()) {
-            req.setAttribute("errorMessage", "Email is required.");
-            doGet(req, resp);
-            return;
-        }
-        if (password == null || password.trim().isEmpty()) {
-            req.setAttribute("errorMessage", "Password is required.");
-            doGet(req, resp);
-            return;
-        }
-
-        email = email.trim();
+        UserService userService = new UserService();
 
         try {
-            LoginService loginService = new LoginService();
-            UserModel user = loginService.authenticate(email, password);
-
-            if (user == null) {
-                req.setAttribute("errorMessage", "Invalid email or password.");
-                doGet(req, resp);
-                return;
-            }
-
+            UserModel user = userService.authenticateUser(email, password);
 
             HttpSession session = req.getSession(true);
             session.setAttribute("user", user);
 
             resp.sendRedirect(req.getContextPath() + "/dashboard");
+
+        } catch (ValidationException e) {
+            req.setAttribute("errorMessage", e.getMessage());
+            doGet(req, resp);
 
         } catch (Exception e) {
             e.printStackTrace();

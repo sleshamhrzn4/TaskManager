@@ -10,8 +10,11 @@ public class FlywayMigrationListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        Flyway flyway = Flyway.configure().dataSource(DBConfig.getDataSource())
-                .baselineOnMigrate(true).load();
+        Flyway flyway = Flyway.configure()
+                .dataSource(DBConfig.getDataSource())
+                .baselineOnMigrate(true)
+                .baselineVersion("5")
+                .load();
 
         flyway.migrate();
     }
