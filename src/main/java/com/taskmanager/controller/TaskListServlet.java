@@ -1,8 +1,8 @@
 package com.taskmanager.controller;
 
-import com.taskmanager.dao.TaskDAO;
 import com.taskmanager.model.TaskModel;
 import com.taskmanager.model.UserModel;
+import com.taskmanager.service.TaskService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 
 @WebServlet(urlPatterns = {"/tasklist"})
 public class TaskListServlet extends HttpServlet {
+
+    private final TaskService taskService = new TaskService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -55,12 +57,14 @@ public class TaskListServlet extends HttpServlet {
                 }
             }
             int pageSize = 5;
-            TaskDAO taskDAO = new TaskDAO();
 
-            List<TaskModel> tasks = taskDAO.getTasksPaged(
-                    user.getUserId(), user.getWorkspaceId(), search, priorityFilter, statusFilter, overdueOnly, sortBy, sortDir, pageNumber, pageSize);
+            List<TaskModel> tasks = taskService.getTasksForWorkspace(
+                    user.getUserId(), user.getWorkspaceId(), search, priorityFilter, statusFilter,
+                    overdueOnly, sortBy, sortDir, pageNumber, pageSize);
 
-            int totalCount = taskDAO.getTotalTaskCount(user.getUserId(), user.getWorkspaceId(), search, priorityFilter, statusFilter, overdueOnly);
+            int totalCount = taskService.getTotalTaskCount(
+                    user.getUserId(), user.getWorkspaceId(), search, priorityFilter, statusFilter, overdueOnly);
+
             int totalPages = (int) Math.ceil((double) totalCount / pageSize);
             if (totalPages < 1) totalPages = 1;
 

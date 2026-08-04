@@ -3,6 +3,10 @@ package com.taskmanager.controller;
 import com.taskmanager.dao.TaskDAO;
 import com.taskmanager.model.TaskModel;
 import com.taskmanager.model.UserModel;
+import com.taskmanager.service.TaskService;
+import com.taskmanager.exception.ResourceNotFoundException;
+import com.taskmanager.exception.UnauthorizedAccessException;
+import com.taskmanager.exception.ValidationException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,7 +14,6 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +21,7 @@ import java.util.List;
 public class TaskServlet extends HttpServlet {
 
     private final TaskDAO taskDAO = new TaskDAO();
+    private final TaskService taskService = new TaskService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -44,14 +48,22 @@ public class TaskServlet extends HttpServlet {
                     handleAdd(request, user.getUserId(), user.getWorkspaceId());
                     break;
                 case "update":
-                    handleUpdate(request);
+                    handleUpdate(request, user.getWorkspaceId());
                     break;
                 case "delete":
-                    handleDelete(request);
+                    handleDelete(request, user.getWorkspaceId());
                     break;
                 default:
                     break;
             }
+        } catch (ValidationException e) {
+            request.setAttribute("errorMessage", e.getMessage());
+        } catch (ResourceNotFoundException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
+            return;
+        } catch (UnauthorizedAccessException e) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+            return;
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Something went wrong: " + e.getMessage());
@@ -67,43 +79,35 @@ public class TaskServlet extends HttpServlet {
     }
 
     private void handleAdd(HttpServletRequest request, int userId, int workspaceId) throws Exception {
-        TaskModel task = new TaskModel();
-        task.setUserId(userId);
-        task.setWorkspaceId(workspaceId);
-        task.setTitle(request.getParameter("title"));
-        task.setDescription(request.getParameter("description"));
-        task.setPriority(request.getParameter("priority"));
-        task.setStatus("todo");
-        task.setCreatedDate(LocalDateTime.now());
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        String priority = request.getParameter("priority");
 
         String dueDateStr = request.getParameter("dueDate");
-        task.setDueDate((dueDateStr != null && !dueDateStr.trim().isEmpty())
-                ? LocalDate.parse(dueDateStr) : null);
+        LocalDate dueDate = (dueDateStr != null && !dueDateStr.trim().isEmpty())
+                ? LocalDate.parse(dueDateStr) : null;
 
-        taskDAO.addTask(task);
+        taskService.createTask(userId, workspaceId, title, description, priority, dueDate);
     }
 
-    private void handleUpdate(HttpServletRequest request) throws Exception {
+    private void handleUpdate(HttpServletRequest request, int workspaceId) throws Exception {
         int taskId = Integer.parseInt(request.getParameter("taskId"));
 
-        TaskModel task = taskDAO.getTaskById(taskId);
-        if (task == null) return;
-
-        task.setTitle(request.getParameter("title"));
-        task.setDescription(request.getParameter("description"));
-        task.setPriority(request.getParameter("priority"));
-        task.setStatus(request.getParameter("status"));
+        String title = request.getParameter("title");
+        String description = request.getParameter("description");
+        String priority = request.getParameter("priority");
+        String status = request.getParameter("status");
 
         String dueDateStr = request.getParameter("dueDate");
-        task.setDueDate((dueDateStr != null && !dueDateStr.trim().isEmpty())
-                ? LocalDate.parse(dueDateStr) : null);
+        LocalDate dueDate = (dueDateStr != null && !dueDateStr.trim().isEmpty())
+                ? LocalDate.parse(dueDateStr) : null;
 
-        taskDAO.updateTask(task);
+        taskService.updateTask(taskId, workspaceId, title, description, priority, status, dueDate);
     }
 
-    private void handleDelete(HttpServletRequest request) throws Exception {
+    private void handleDelete(HttpServletRequest request, int workspaceId) throws Exception {
         int taskId = Integer.parseInt(request.getParameter("taskId"));
-        taskDAO.deleteTask(taskId);
+        taskService.deleteTask(taskId, workspaceId);
     }
 
     private void loadBoard(HttpServletRequest request, HttpServletResponse response)
@@ -126,7 +130,6 @@ public class TaskServlet extends HttpServlet {
                     case "todo":
                         todoTasks.add(task);
                         break;
-
                     case "inprogress":
                         progressTasks.add(task);
                         break;
