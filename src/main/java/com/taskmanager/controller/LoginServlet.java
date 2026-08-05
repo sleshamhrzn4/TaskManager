@@ -2,8 +2,8 @@ package com.taskmanager.controller;
 
 import com.taskmanager.exception.ValidationException;
 import com.taskmanager.model.UserModel;
-import com.taskmanager.service.LoginService;
 import com.taskmanager.service.UserService;
+import com.taskmanager.utils.CsrfUtil;
 import
         jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -43,6 +43,7 @@ public class LoginServlet extends HttpServlet {
 
             HttpSession session = req.getSession(true);
             session.setAttribute("user", user);
+            session.setAttribute("csrfToken", CsrfUtil.generateToken());
 
             resp.sendRedirect(req.getContextPath() + "/dashboard");
 

@@ -46,6 +46,7 @@
                 </div>
                 <form id="addTaskForm" action="${pageContext.request.contextPath}/task" method="post">
                     <input type="hidden" name="action" value="add"/>
+                    <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
                     <label>
                         Title
                         <input type="text" name="title" required/>
@@ -83,19 +84,19 @@
                 <c:forEach var="task" items="${todoTasks}">
                     <div class="card"
                          data-id="${task.taskId}"
-                         data-title="${task.title}"
-                         data-description="${task.description}"
+                         data-title="<c:out value="${task.title}"/>"
+                         data-description="<c:out value="${task.description}"/>"
                          data-priority="${task.priority}"
                          data-duedate="${task.dueDate}"
                          data-status="${task.status}"
                          onclick="openTaskModal(this)">
                         <span class="dot dot-${fn:toLowerCase(task.priority)}"></span>
-                            ${task.title}
+                        <c:out value="${task.title}"/>
                     </div>
                 </c:forEach>
             </div>
 
-            <!-- IN PROGRESS -->
+
             <div class="column">
                 <div class="column-header">
                     <h2>In Progress</h2>
@@ -104,14 +105,14 @@
                 <c:forEach var="task" items="${progressTasks}">
                     <div class="card"
                          data-id="${task.taskId}"
-                         data-title="${task.title}"
-                         data-description="${task.description}"
+                         data-title="<c:out value="${task.title}"/>"
+                         data-description="<c:out value="${task.description}"/>"
                          data-priority="${task.priority}"
                          data-duedate="${task.dueDate}"
                          data-status="${task.status}"
                          onclick="openTaskModal(this)">
                         <span class="dot dot-${fn:toLowerCase(task.priority)}"></span>
-                            ${task.title}
+                        <c:out value="${task.title}"/>
                     </div>
                 </c:forEach>
             </div>
@@ -123,16 +124,16 @@
                     <span class="count">${fn:length(doneTasks)}</span>
                 </div>
                 <c:forEach var="task" items="${doneTasks}">
-                    <div class="card card-done"
+                    <div class="card"
                          data-id="${task.taskId}"
-                         data-title="${task.title}"
-                         data-description="${task.description}"
+                         data-title="<c:out value="${task.title}"/>"
+                         data-description="<c:out value="${task.description}"/>"
                          data-priority="${task.priority}"
                          data-duedate="${task.dueDate}"
                          data-status="${task.status}"
                          onclick="openTaskModal(this)">
                         <span class="dot dot-${fn:toLowerCase(task.priority)}"></span>
-                            ${task.title}
+                        <c:out value="${task.title}"/>
                     </div>
                 </c:forEach>
             </div>
@@ -150,6 +151,7 @@
 
         <form action="${pageContext.request.contextPath}/task" method="post">
             <input type="hidden" name="action" value="update"/>
+            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
             <input type="hidden" id="modalTaskId" name="taskId"/>
 
             <label>
@@ -196,6 +198,8 @@
 
         <form action="${pageContext.request.contextPath}/task" method="post" class="delete-form">
             <input type="hidden" name="action" value="delete"/>
+            <input type="hidden" name="csrfToken" value="${sessionScope.csrfToken}"/>
+
             <input type="hidden" id="modalDeleteTaskId" name="taskId"/>
             <button type="submit" class="delete-btn">Delete Task</button>
         </form>

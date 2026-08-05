@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <c:if test="${not empty errorMessage}">
-    <div class="error-msg">${errorMessage}</div>
+    <div class="error-msg"><c:out value="${errorMessage}"/></div>
 </c:if>
 
 <table class="task-table">
@@ -40,9 +40,15 @@
 
 <div class="pagination">
     <c:forEach begin="1" end="${totalPages}" var="p">
-        <a href="${pageContext.request.contextPath}/tasklist?page=${p}&search=${search}&priority=${priorityFilter}&status=${statusFilter}&sortBy=${sortBy}&sortDir=${sortDir}&overdue=${overdueOnly}"
-           class="${p == currentPage ? 'active' : ''}">
-                ${p}
-        </a>
+        <c:url var="pageUrl" value="/tasklist">
+            <c:param name="page" value="${p}"/>
+            <c:param name="search" value="${search}"/>
+            <c:param name="priority" value="${priorityFilter}"/>
+            <c:param name="status" value="${statusFilter}"/>
+            <c:param name="sortBy" value="${sortBy}"/>
+            <c:param name="sortDir" value="${sortDir}"/>
+            <c:param name="overdue" value="${overdueOnly}"/>
+        </c:url>
+        <a href="${pageUrl}" class="${p == currentPage ? 'active' : ''}">${p}</a>
     </c:forEach>
 </div>

@@ -1,22 +1,16 @@
 package com.taskmanager.controller;
 
-import com.taskmanager.dao.UserDAO;
 import com.taskmanager.exception.ValidationException;
-import com.taskmanager.model.UserModel;
-import com.taskmanager.service.RegisterService;
 import com.taskmanager.service.UserService;
-import com.taskmanager.utils.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 
 import java.io.IOException;
 import java.io.Serial;
-import java.util.Map;
 
 @WebServlet(asyncSupported = true, urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
