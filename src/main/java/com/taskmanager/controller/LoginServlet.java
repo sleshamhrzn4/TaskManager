@@ -42,6 +42,8 @@ public class LoginServlet extends HttpServlet {
             UserModel user = userService.authenticateUser(email, password);
 
             HttpSession session = req.getSession(true);
+            session.invalidate();
+            session = req.getSession(true);
             session.setAttribute("user", user);
             session.setAttribute("csrfToken", CsrfUtil.generateToken());
 

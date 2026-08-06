@@ -12,7 +12,7 @@ import java.util.List;
 
 public class WorkspaceDAO {
 
-    public void insertWorkspace(Connection con, WorkspaceModel workspace) throws Exception {
+    public long insertWorkspace(Connection con, WorkspaceModel workspace) throws Exception {
         String sql = "INSERT INTO workspaces(organizationId,workspaceName) VALUES (?,?)";
 
         try (PreparedStatement pst = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,7 +23,7 @@ public class WorkspaceDAO {
 
             try (ResultSet rs = pst.getGeneratedKeys()) {
                 if (rs.next()) {
-                    rs.getLong(1);
+                    return rs.getLong(1);
                 } else {
                     throw new Exception("Workspace insert failed, no ID obtained");
                 }

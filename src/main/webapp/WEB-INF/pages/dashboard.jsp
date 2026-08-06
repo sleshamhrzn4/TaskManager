@@ -10,7 +10,6 @@
 
 <div class="app-layout">
 
-    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-brand"><span class="check">&#10003;</span> TEGER</div>
 
@@ -23,7 +22,6 @@
         <a href="${pageContext.request.contextPath}/logout" class="logout-link">Log out</a>
     </aside>
 
-    <!-- MAIN CONTENT -->
     <main class="main-content">
         <h1>Dashboard</h1>
         <p class="welcome-text">Welcome back, ${sessionScope.username}</p>

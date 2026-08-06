@@ -28,7 +28,7 @@ public class OrganizationDAO {
 }
 
     public OrganizationModel findOrganizationById(long organizationId) throws Exception{
-        String sql= "SELECT organizationId,organozationName, subscriptionPlan,createdDate FROM organizations WHERE organizationId=?";
+        String sql= "SELECT organizationId,organizationName, subscriptionPlan,createdDate FROM organizations WHERE organizationId=?";
 
         try (Connection con= DBConfig.getConnection();
             PreparedStatement pst = con.prepareStatement(sql)){

@@ -26,8 +26,11 @@ public class UserService {
         }
         if (password == null || password.trim().isEmpty()) {
             errors.put("password", "Password is required.");
-        } else if (password.length() < 6) {
-            errors.put("password", "Password must be at least 6 characters.");
+        } else {
+            String passwordError = validatePasswordStrength(password);
+            if (passwordError != null) {
+                errors.put("password", passwordError);
+            }
         }
 
         if (!errors.isEmpty()) {
@@ -41,6 +44,27 @@ public class UserService {
 
         String hashedPassword = PasswordUtil.getHashPassword(password);
         userDAO.insertUser(userName, userEmail.trim(), hashedPassword, "user", organizationId);
+    }
+
+    private String validatePasswordStrength(String password) {
+        if (password.length() < 8) {
+            return "Password must be at least 8 characters long.";
+        }
+
+        boolean hasUpper = false, hasLower = false, hasDigit = false, hasSymbol = false;
+
+        for (char c : password.toCharArray()) {
+            if (Character.isUpperCase(c)) hasUpper = true;
+            else if (Character.isLowerCase(c)) hasLower = true;
+            else if (Character.isDigit(c)) hasDigit = true;
+            else hasSymbol = true;
+        }
+
+        if (!hasUpper || !hasLower || !hasDigit || !hasSymbol) {
+            return "Password must include an uppercase letter, a lowercase letter, a number, and a symbol.";
+        }
+
+        return null;
     }
 
     public UserModel authenticateUser(String email, String password) throws Exception {

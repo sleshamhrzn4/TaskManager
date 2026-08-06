@@ -30,11 +30,11 @@ public class OrganizationService {
             WorkspaceModel defaultWorkspace = new WorkspaceModel();
             defaultWorkspace.setOrganizationId(newOrganizationId);
             defaultWorkspace.setWorkspaceName("General");
-            workspaceDAO.insertWorkspace(con, defaultWorkspace);
+            long newWorkspaceId = workspaceDAO.insertWorkspace(con, defaultWorkspace);
+            System.out.println("New default workspace ID: " + newWorkspaceId);
 
             con.commit();
             return newOrganizationId;
-
 
         } catch (Exception e) {
             if (con != null) {
